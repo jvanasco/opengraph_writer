@@ -131,65 +131,312 @@ og_properties = {
             },
             'article': { 
                 'namespace' : 'http://ogp.me/ns/article#',
-                'properties':{} 
+                'properties':{
+                    'article:published_time' : { 
+                        'type':'datetime', 
+                        'description':'When the article was first published.'
+                    },
+                    'article:modified_time' : { 
+                        'type':'datetime', 
+                        'description':'When the article was last changed.'
+                    },
+                    'article:expiration_time' : { 
+                        'type':'datetime', 
+                        'description':'When the article is out of date after.'
+                    },
+                    'article:author' : { 
+                        'type':'profile', 
+                        'description':'Writers of the article.',
+                        'array_allowed': True
+                    },
+                    'article:section': { 
+                        'type':'string', 
+                        'description':'A high-level section name. E.g. Technology'
+                        },
+                    'article:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this article.',
+                        'array_allowed': True
+                    },
+                } 
             },
             'book': { 
                 'namespace' : 'http://ogp.me/ns/book#',
-                'properties':{} 
+                'properties':{
+                    'book:author' : { 
+                        'type':'profile', 
+                        'description':'Who wrote this book.',
+                        'array_allowed': True
+                    },
+                    'book:isbn' : { 
+                        'type':'string', 
+                        'description':'The ISBN'
+                    },
+                    'book:release_date' : { 
+                        'type':'datetime', 
+                        'description':'The date the book was released.'
+                    },
+                    'book:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this book.',
+                        'array_allowed': True
+                    },
+                } 
             },
             'profile': { 
                 'namespace' : 'http://ogp.me/ns/profile#',
-                'properties':{} 
+                'properties':{
+                    'profile:first_name' : { 
+                        'type':'string', 
+                        'description':'first name'
+                    },
+                    'profile:last_name' : { 
+                        'type':'string', 
+                        'description':'last name'
+                    },
+                    'profile:username' : { 
+                        'type':'string', 
+                        'description':'A short unique string to identify them.'
+                    },
+                    'profile:gender' : { 
+                        'type':'enum', 
+                        'enums':['male','female'],
+                        'description':'Their gender'
+                    },
+                } 
             },
             'video.movie': {
                 'namespace' : 'http://ogp.me/ns/video#',
-                'properties' : {},
+                'properties' : {
+                    'video:actor' : { 
+                        'type':'profile', 
+                        'description':'actors in the movie',
+                        'array_allowed': True
+                    },
+                    'video:actor:role' : { 
+                        'type':'string', 
+                        'description':'the role they played'
+                    },
+                    'video:director' : { 
+                        'type':'profile', 
+                        'description':'directors of the movie',
+                        'array_allowed': True
+                    },
+                    'video:writer' : { 
+                        'type':'profile', 
+                        'description':'writers of the movie',
+                        'array_allowed': True
+                    },
+                    'video:duration' : { 
+                        'type':'integer', 
+                        'description':'The movie\'s length in seconds',
+                    },
+                    'video:release_date' : { 
+                        'type':'datetime', 
+                        'description':'The date the movie was released',
+                    },
+                    'video:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this video.',
+                        'array_allowed': True
+                    },
+                },
             },
             'video.episode': {
                 'namespace' : 'http://ogp.me/ns/video#',
-                'properties' : {},
+                'properties' : {
+                    'video:actor' : { 
+                        'type':'profile', 
+                        'description':'actors in the movie',
+                        'array_allowed': True
+                    },
+                    'video:actor:role' : { 
+                        'type':'string', 
+                        'description':'the role they played'
+                    },
+                    'video:director' : { 
+                        'type':'profile', 
+                        'description':'directors of the movie',
+                        'array_allowed': True
+                    },
+                    'video:writer' : { 
+                        'type':'profile', 
+                        'description':'writers of the movie',
+                        'array_allowed': True
+                    },
+                    'video:duration' : { 
+                        'type':'integer', 
+                        'description':'The movie\'s length in seconds',
+                    },
+                    'video:release_date' : { 
+                        'type':'datetime', 
+                        'description':'The date the movie was released',
+                    },
+                    'video:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this video.',
+                        'array_allowed': True
+                    },
+                    'video:series' : {
+                        'type': 'video.tv_show',
+                        'description': 'Which series this episode belongs to.'
+                    },
+                },
             },
             'video.tv_show': {
                 'namespace' : 'http://ogp.me/ns/video#',
-                'properties' : {},
+                'properties' : {
+                    'video:actor' : { 
+                        'type':'profile', 
+                        'description':'actors in the movie',
+                        'array_allowed': True
+                    },
+                    'video:actor:role' : { 
+                        'type':'string', 
+                        'description':'the role they played'
+                    },
+                    'video:director' : { 
+                        'type':'profile', 
+                        'description':'directors of the movie',
+                        'array_allowed': True
+                    },
+                    'video:writer' : { 
+                        'type':'profile', 
+                        'description':'writers of the movie',
+                        'array_allowed': True
+                    },
+                    'video:duration' : { 
+                        'type':'integer', 
+                        'description':'The movie\'s length in seconds',
+                    },
+                    'video:release_date' : { 
+                        'type':'datetime', 
+                        'description':'The date the movie was released',
+                    },
+                    'video:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this video.',
+                        'array_allowed': True
+                    },
+                },
             },
             'video.other': {
                 'namespace' : 'http://ogp.me/ns/video#',
-                'properties' : {},
+                'properties' : {
+                    'video:actor' : { 
+                        'type':'profile', 
+                        'description':'actors in the movie',
+                        'array_allowed': True
+                    },
+                    'video:actor:role' : { 
+                        'type':'string', 
+                        'description':'the role they played'
+                    },
+                    'video:director' : { 
+                        'type':'profile', 
+                        'description':'directors of the movie',
+                        'array_allowed': True
+                    },
+                    'video:writer' : { 
+                        'type':'profile', 
+                        'description':'writers of the movie',
+                        'array_allowed': True
+                    },
+                    'video:duration' : { 
+                        'type':'integer', 
+                        'description':'The movie\'s length in seconds',
+                    },
+                    'video:release_date' : { 
+                        'type':'datetime', 
+                        'description':'The date the movie was released',
+                    },
+                    'video:tag' : { 
+                        'type':'string', 
+                        'description':'Tag words associated with this video.',
+                        'array_allowed': True
+                    },
+                },
             },
            'music.song': {
                 'namespace' : 'http://ogp.me/ns/music#',
                 'properties' : {
-                    'music:duration':{},
-                    'music:album':{},
-                    'music:album:disc':{},
-                    'music:album:track':{},
-                    'music:musician':{},
+                    'music:duration':{
+                        'type':'integer',
+                        'description':'The song\'s length in seconds'
+                    },
+                    'music:album':{
+                        'type':'music.album',
+                        'description':'The album this song is from.',
+                        'array_allowed':True
+                    },
+                    'music:album:disc':{
+                        'type':'integer',
+                        'description':'Which disc of the album this song is on'
+                    },
+                    'music:album:track':{
+                        'type':'integer',
+                        'description':'Which track this song is'
+                    },
+                    'music:musician':{
+                        'type':'profile',
+                        'description':'The musician that made this song',
+                        'array_allowed':True
+                    },
                 }
             },
             'music.album': {
                 'namespace' : 'http://ogp.me/ns/music#',
                 'properties' : {
-                    'music:song':{},
-                    'music:song:disc':{},
-                    'music:song:track':{},
-                    'music:musician':{},
-                    'music:release_date':{},
+                    'music:song':{
+                        'type':'music.song',
+                        'description':'The song on this album.',
+                    },
+                    'music:song:disc':{
+                        'type':'integer',
+                        'description':'the disc the song is on for the album'
+                    },
+                    'music:song:track':{
+                        'type':'integer',
+                        'description':'the track number the song is on for the album'
+                    },
+                    'music:musician':{
+                        'type':'profile',
+                        'description':'The musician that made this song'
+                    },
+                    'music:release_date':{
+                        'type':'datetime',
+                        'description':'The date the album was released.'
+                    },
                 }
             },
             'music.playlist': {
                 'namespace' : 'http://ogp.me/ns/music#',
                 'properties' : {
-                    'music:song':{},
-                    'music:song:disc':{},
-                    'music:song:track':{},
-                    'music:creator':{},
+                    'music:song':{
+                        'type':'music.song',
+                        'description':'The song',
+                    },
+                    'music:song:disc':{
+                        'type':'integer',
+                        'description':'the disc the song is on for the album'
+                    },
+                    'music:song:track':{
+                        'type':'integer',
+                        'description':'the track number the song is on for the album'
+                    },
+                    'music:creator':{
+                        'type':'profile',
+                        'description':'The creator of this playlist.'
+                    }
                 },
             },
             'music.radio_station': {
                 'namespace' : 'http://ogp.me/ns/music#',
                 'properties' : {
-                    'music:creator':{},
+                    'music:creator':{
+                        'type':'profile',
+                        'description':'The creator of this station.'
+                    },
                 },
             },
 
@@ -249,9 +496,17 @@ import urllib2
 class OpenGraphItem(object):
     _data= None
     _errors= None
-    def __init__(self):
+    def __init__(self,sets=None):
         self._data= {}
         self._errors= {}
+        if sets:
+           self.set_many(sets)
+    
+    def set_many( self, pairs ):
+    	for pair in pairs :
+    	    ( f,v ) = pair
+    	    self.set(f,v)
+    	    
         
     def set(self,field,value,append=False):
         if not append:
