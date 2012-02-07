@@ -17,6 +17,7 @@ setup(name="opengraph_writer",
       description="Lightweight open graph support for writing and validating objects",
       long_description=README,
       classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
         "Framework :: Pylons",
         "Programming Language :: Python",
