@@ -49,7 +49,7 @@ Usage:
 				og.set('og:site_name','Cliqued.in')
 		
 	then in mako:
-		${tmpl_context.pyramid_opengraph_item.as_html()|n}
+		${request.pyramid_opengraph_item.as_html()|n}
 		
 
 ==============
