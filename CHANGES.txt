@@ -1,1 +1,3 @@
+0.0.3 - migrated pyramid helper to stash into request and not tmpl_context
+0.0.2 - extending validation
 0.0.1 - initial import

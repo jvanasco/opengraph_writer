@@ -1,6 +1,6 @@
 
 """
-v 0.0.2
+v 0.0.3
 
 Goal:
 
@@ -781,10 +781,10 @@ class OpenGraphItem(object):
 
 
 def pyramid_opengraph_item(request):
-    """gets the opengraph item attached to the pyramid request's tmpl_context object. if non exists, makes a new one , attaches and returns it."""
-    if not hasattr( request.tmpl_context , 'pyramid_opengraph_item' ) :
-        request.tmpl_context.pyramid_opengraph_item= OpenGraphItem()
-    return request.tmpl_context.pyramid_opengraph_item
+    """gets the opengraph item attached to the pyramid request object. if non exists, makes a new one , attaches and returns it."""
+    if not hasattr( request , 'pyramid_opengraph_item' ) :
+        request.pyramid_opengraph_item= OpenGraphItem()
+    return request.pyramid_opengraph_item
 
 
 def pylons_opengraph_item(c):
