@@ -13,13 +13,14 @@ requires = [
     ]
 
 setup(name="opengraph_writer",
-      version="0.0.3",
+      version="0.0.4",
       description="Lightweight open graph support for writing and validating objects",
       long_description=README,
       classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
         "Framework :: Pylons",
+        "Framework :: Pyramid",
         "Programming Language :: Python",
         "License :: OSI Approved :: MIT License",
         ],
