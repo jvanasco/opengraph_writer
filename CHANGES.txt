@@ -1,3 +1,4 @@
+0.0.6 - fixed setuptools, again
 0.0.5 - fixed setuptools
 0.0.4 - added pyramid classifier
 0.0.3 - migrated pyramid helper to stash into request and not tmpl_context
