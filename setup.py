@@ -13,7 +13,7 @@ requires = [
     ]
 
 setup(name="opengraph_writer",
-      version="0.0.4",
+      version="0.0.5",
       description="Lightweight open graph support for writing and validating objects",
       long_description=README,
       classifiers=[
