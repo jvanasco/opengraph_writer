@@ -1,57 +1,4 @@
-
 """
-v 0.0.3
-
-Goal:
-
-    i need a lightweight package that can do the following:
-        1. create an object to store open graph metadata for a url
-        2. store that object, and bring it back to continually populate and eventually print during page generation
-        3. validate itself at least trivially, so i don't have to do dns tricks to let the facebook linter/debugger work wherever i am
-        
-    to do:
-    	1. object needs proper array/multivalue support
-    	2. object needs validation on profile
-    	3. in practice, but not docs, a lot of the ogp values will accept url that create a network. ie: song links to album, and musician pages.  this validation isn't supported.
-
-
-	recently done:
-        1. consolidate documentation on open graph 1.0 and 2.0
-        2. create structured data describing the open graph protocls
-        3. create an object that can store og data , validate itself, and print itself out
-        4. create some helpers for pyramid and pylons
-        
-Usage:
-
-    a= OpenGraphItem()
-    a.set('og:title','MyWebsite')
-    a.set('og:type','article')
-    a.set_many( (('og:url','http://f.me'),('og:image','http://f.me/a.png'),('article:author','abc'),('article:published_time','2012-01-10')) )
-    status = a.validate()
-    if status:
-       print "object ok"
-    else:
-       print "object not ok"
-    print a.as_html(debug=True)
-
-
-	the debug=True argument will print debugging info on your object. isn't that special!
-	
-	
-	in pyramid you might do:
-
-
-		from opengraph_writer import pyramid_opengraph_item
-		class handler(handler)
-			def setup_method(self,request):
-				og= pyramid_opengraph_item(request)
-				og.set('og:type','website')
-				og.set('og:site_name','Cliqued.in')
-		
-	then in mako:
-		${request.pyramid_opengraph_item.as_html()|n}
-		
-
 ==============
 
 The followig information about Open Graph 1.0 is copied verbatim from Facebook, and remains their copyright :
@@ -96,11 +43,30 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 
 
+
 """
-import types
-import urllib2
+
 import datetime
 import re
+import types
+from xml.sax.saxutils import escape, unescape
+
+
+
+# https://wiki.python.org/moin/EscapingHtml
+# escape() and unescape() takes care of &, < and >.
+html_escape_table = {
+     '"': "&quot;",
+     "'": "&apos;"
+ }
+html_unescape_table = {v:k for k, v in html_escape_table.items()}
+def html_escape(text):
+    return escape(text, html_escape_table)
+def html_unescape(text):
+    return unescape(text, html_unescape_table)
+
+
+
 
 # http://en.wikipedia.org/wiki/ISO_8601
 regex_dates = {
@@ -726,7 +692,7 @@ class OpenGraphItem(object):
                         _errror('recommended',i,"non-required Element does not validate")
 
 
-        if 'og:type' not in errors:
+        if 'og:type' not in errors['critical'] and 'og:type' not in errors['recommended'] :
             _error= None
             if schema1 :
                 if self._data['og:type'] not in og_properties['og:type']['valid_types-1'] :
@@ -774,7 +740,7 @@ class OpenGraphItem(object):
                         _error= ' critical-error="%s"' % self._errors['critical'][i].encode('utf8')
                     elif i in self._errors['recommended']:
                         _error= ' recommended-error="%s"' % self._errors['recommended'][i].encode('utf8')
-                output.append( """<meta property="%s" content="%s"%s/>""" % ( i , urllib2.quote(self._data[i].encode('utf8')) , _error ) )
+                output.append( """<meta property="%s" content="%s"%s/>""" % ( i , html_escape(self._data[i].encode('utf8')) , _error ) )
         output= '\n'.join(output)
         return output
 
