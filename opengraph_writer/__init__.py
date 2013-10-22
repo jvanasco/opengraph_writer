@@ -49,22 +49,8 @@ Arrays
 import datetime
 import re
 import types
-from xml.sax.saxutils import escape, unescape
 
-
-
-# https://wiki.python.org/moin/EscapingHtml
-# escape() and unescape() takes care of &, < and >.
-html_escape_table = {
-     '"': "&quot;",
-     "'": "&apos;"
- }
-html_unescape_table = {v:k for k, v in html_escape_table.items()}
-def html_escape(text):
-    return escape(text, html_escape_table)
-def html_unescape(text):
-    return unescape(text, html_unescape_table)
-
+from metadata_utils import html_attribute_escape
 
 
 
@@ -734,14 +720,14 @@ class OpenGraphItem(object):
             if type(i) == types.ListType :
                 pass
             else:
-                _error= ''
+                _error= u''
                 if debug:
                     if i in self._errors['critical']:
-                        _error= ' critical-error="%s"' % self._errors['critical'][i].encode('utf8')
+                        _error= u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][i])
                     elif i in self._errors['recommended']:
-                        _error= ' recommended-error="%s"' % self._errors['recommended'][i].encode('utf8')
-                output.append( """<meta property="%s" content="%s"%s/>""" % ( i , html_escape(self._data[i].encode('utf8')) , _error ) )
-        output= '\n'.join(output)
+                        _error= u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][i])
+                output.append( u"""<meta property="%s" content="%s"%s/>""" % ( html_attribute_escape(i) , html_attribute_escape(self._data[i]) , _error ) )
+        output= u'\n'.join(output)
         return output
 
 

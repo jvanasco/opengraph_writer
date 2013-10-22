@@ -9,12 +9,14 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, "README.md")).read()
 README = README.split("\n\n", 1)[0] + "\n"
 
-requires = []
+requires = [\
+    "metdata_utils >=0.0.1",
+]
 
 setup(\
     name="opengraph_writer",
     description="Lightweight open graph support for writing and validating objects",
-    version="0.1.0",
+    version="0.1.1",
     url="https://github.com/jvanasco/opengraph_writer",
     author="Jonathan Vanasco",
     author_email="jonathan@findmeon.com",
