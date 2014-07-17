@@ -29,11 +29,11 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
-        "Intended Audience:: Developers",
-        "Framework:: Pylons",
-        "Framework:: Pyramid",
-        "Programming Language:: Python",
-        "License:: OSI Approved:: MIT License",
+        "Intended Audience :: Developers",
+        "Framework :: Pylons",
+        "Framework :: Pyramid",
+        "Programming Language :: Python",
+        "License :: OSI Approved :: MIT License",
     ],
     license="MIT",
 )
