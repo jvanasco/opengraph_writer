@@ -1,3 +1,6 @@
+0.1.2 -
+	* flake8
+
 0.1.1 -
 	* improved HTML escaping and tag writing
 		- consolidated escaping into external library, `metadata_utils`
