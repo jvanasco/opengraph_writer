@@ -57,6 +57,28 @@ class TestsSimple(unittest.TestCase):
         status = a.validate()
         assert status is False
 
+    def test_set_multi(self):
+        a = OpenGraphItem()
+        a.set_many((
+            ('og:url', 'http://f.me'),
+            ('og:image', 'http://f.me/a.png'),
+            ('og:title', 'MyWebsite'),
+            ('og:type', 'article'),
+        ))
+        a.set('og:tag', 'One', append=True)
+        a.set('og:tag', 'Two', append=True)
+        a.set('og:tag', 'Three', append=True)
+        status = a.validate()
+        assert status is True
+        as_html = a.as_html()
+        assert as_html == """<meta property="og:image" content="http://f.me/a.png"/>
+<meta property="og:tag" content="One"/>
+<meta property="og:tag" content="Two"/>
+<meta property="og:tag" content="Three"/>
+<meta property="og:title" content="MyWebsite"/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="http://f.me"/>"""
+
     def test_html(self):
         a = OpenGraphItem()
         a.set('og:title', 'MyWebsite')
@@ -71,10 +93,10 @@ class TestsSimple(unittest.TestCase):
         status = a.validate()
         assert status is True
         as_html = a.as_html()
-        assert as_html == """<meta property="og:url" content="http://f.me"/>
-<meta property="og:type" content="article"/>
+        assert as_html == """<meta property="article:author" content="abc"/>
+<meta property="article:published_time" content="2012-01-10"/>
 <meta property="og:description" content="one two three four ? &lt;open &gt;close"/>
-<meta property="article:author" content="abc"/>
-<meta property="og:title" content="MyWebsite"/>
 <meta property="og:image" content="http://f.me/a.png"/>
-<meta property="article:published_time" content="2012-01-10"/>"""
+<meta property="og:title" content="MyWebsite"/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="http://f.me"/>"""

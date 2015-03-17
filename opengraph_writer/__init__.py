@@ -700,17 +700,21 @@ class OpenGraphItem(object):
 
     def as_html(self, debug=False):
         output = []
-        for i in self._data:
-            if isinstance(i, types.ListType):
-                pass
+        _keys = self._data.keys()
+        _keys.sort()
+        for k in _keys:
+            v = self._data[k]
+            _error = u''
+            if debug:
+                if k in self._errors['critical']:
+                    _error = u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][k])
+                elif k in self._errors['recommended']:
+                    _error = u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][k])
+            if isinstance(v, types.ListType):
+                for i in v:
+                    output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(i), _error))
             else:
-                _error = u''
-                if debug:
-                    if i in self._errors['critical']:
-                        _error = u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][i])
-                    elif i in self._errors['recommended']:
-                        _error = u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][i])
-                output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(i), html_attribute_escape(self._data[i]), _error))
+                output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(v), _error))
         output = u'\n'.join(output)
         return output
 
