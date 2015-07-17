@@ -47,7 +47,7 @@ recently done:
 
 Example Usage:
 
-    a= OpenGraphItem()
+    a = OpenGraphItem()
     a.set('og:title','MyWebsite')
     a.set('og:type','article')
     a.set_many( (('og:url','http://f.me'),('og:image','http://f.me/a.png'),('article:author','abc'),('article:published_time','2012-01-10')) )
@@ -63,6 +63,13 @@ Notes:
 the debug=True argument will print debugging info on your object. isn't that special!
 
 
+# pyramid
+
+this package now has an includeme for pyramid to set up an opengraph_item as a reify'd request method
+
+
+
+-- old method below --
 in pyramid you might do:
 
 	from opengraph_writer import pyramid_opengraph_item

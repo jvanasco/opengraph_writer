@@ -719,20 +719,6 @@ class OpenGraphItem(object):
         return output
 
 
-def pyramid_opengraph_item(request):
-    """gets the opengraph item attached to the pyramid request object. if non exists, makes a new one, attaches and returns it."""
-    if not hasattr(request, 'pyramid_opengraph_item'):
-        request.pyramid_opengraph_item = OpenGraphItem()
-    return request.pyramid_opengraph_item
-
-
-def pylons_opengraph_item(c):
-    """gets the opengraph item attached to the pylons c object. if non exists, makes a new one, attaches and returns it."""
-    if not hasattr(c, 'pyramid_opengraph_item'):
-        c.pyramid_opengraph_item = OpenGraphItem()
-    return c.pyramid_opengraph_item
-
-
 if __name__ == '__main__':
     a = OpenGraphItem()
     a.set('og:title', 'MyWebsite')
