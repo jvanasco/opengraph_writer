@@ -16,7 +16,7 @@ requires = [
 setup(
     name="opengraph_writer",
     description="Lightweight open graph support for writing and validating objects",
-    version="0.2.0",
+    version="0.2.1",
     url="https://github.com/jvanasco/opengraph_writer",
     author="Jonathan Vanasco",
     author_email="jonathan@findmeon.com",

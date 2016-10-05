@@ -597,7 +597,7 @@ def validate_item(info_dict, value):
         except ValueError:
             return False
     elif info_dict['type'] == 'datetime':
-        if isinstance(value, datetime.date) or isinstance(value, datetime.datetime):
+        if isinstance(value, (datetime.date, datetime.datetime)):
             return True
         if isinstance(value, types.StringTypes):
             for test in regex_dates:
