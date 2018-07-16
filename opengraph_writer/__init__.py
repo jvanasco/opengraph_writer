@@ -65,6 +65,7 @@ regex_dates = {
     'datetime, UTC': re.compile('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$'),
 }
 
+
 # basically just testing that the string starts with http/https, and has some resemeblence of a domain on it.  after an optional trailing slash, i don't need to make this super accurate
 regex_url = re.compile("""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
 
@@ -563,8 +564,12 @@ og_properties = {
     },
 }
 facebook_extensions = {
-    'fb:admins': {'required': False, 'description': 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>'},
-    'fb:app_id': {'required': False, 'description': 'A Facebook Platform application ID that administers this page.'},
+    'fb:admins': {'required': False,
+                  'description': 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>',
+                  },
+    'fb:app_id': {'required': False,
+                  'description': 'A Facebook Platform application ID that administers this page.',
+                  },
 }
 
 
@@ -573,18 +578,21 @@ def validate_item(info_dict, value):
         if isinstance(value, types.StringTypes):
             return True
         return False
-    if info_dict['type'] == 'boolean':
+
+    elif info_dict['type'] == 'boolean':
         try:
             success = (0, 1, 'true', 'false').index(value)
             return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'enum':
         try:
             success = info_dict.enums.index(value)
             return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'integer':
         try:
             if isinstance(value, types.IntegerType):
@@ -596,6 +604,7 @@ def validate_item(info_dict, value):
                     return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'datetime':
         if isinstance(value, (datetime.date, datetime.datetime)):
             return True
@@ -604,6 +613,7 @@ def validate_item(info_dict, value):
                 if re.match(regex_dates[test], value):
                     return True
             return False
+
     elif info_dict['type'] == 'url':
         if re.match(regex_url, value):
             return True
@@ -644,7 +654,9 @@ class OpenGraphItem(object):
             self._data[field].append(value)
 
     def validate(self, facebook=False, schema1=False, schema2=True):
-        errors = {'critical': {}, 'recommended': {}, }
+        errors = {'critical': {},
+                  'recommended': {},
+                  }
 
         def _errror(level, item, message):
             # if level not in errors:
