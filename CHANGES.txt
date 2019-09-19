@@ -1,3 +1,7 @@
+0.3.0 -
+	* python3 official support
+	* removed pylons
+
 0.2.1 (unreleased)
 	* cleaned up isinstance check
 
@@ -18,14 +22,12 @@
 		- escaping errors
 		- using explicit unicode strings
 
-
 0.1.0 -
 	* reorganized the package
 	* added tests
 	* made html escaping proper
 	* fixed a bug where validation raised an error ( instead of
 		suppressing the error and returning `False` , along with reporting info )
-
 
 0.0.6 - fixed setuptools, again
 0.0.5 - fixed setuptools

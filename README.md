@@ -43,7 +43,7 @@ recently done:
 1. consolidate documentation on open graph 1.0 and 2.0
 2. create structured data describing the open graph protocls
 3. create an object that can store og data , validate itself, and print itself out
-4. create some helpers for pyramid and pylons
+4. create some helpers for pyramid and pylons(removed in 0.3.0)
 
 Example Usage:
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 """
 ==============
 
@@ -43,11 +44,15 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
+__VERSION__ = '0.3.0'
+
+# stdlib
 import datetime
 import re
-import types
 
+# pypi
 from metadata_utils import html_attribute_escape
+import six
 
 
 # http://en.wikipedia.org/wiki/ISO_8601
@@ -64,6 +69,7 @@ regex_dates = {
     # Separate date and time in UTC:   2012-02-02 15:29Z
     'datetime, UTC': re.compile('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$'),
 }
+
 
 # basically just testing that the string starts with http/https, and has some resemeblence of a domain on it.  after an optional trailing slash, i don't need to make this super accurate
 regex_url = re.compile("""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
@@ -563,31 +569,38 @@ og_properties = {
     },
 }
 facebook_extensions = {
-    'fb:admins': {'required': False, 'description': 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>'},
-    'fb:app_id': {'required': False, 'description': 'A Facebook Platform application ID that administers this page.'},
+    'fb:admins': {'required': False,
+                  'description': 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>',
+                  },
+    'fb:app_id': {'required': False,
+                  'description': 'A Facebook Platform application ID that administers this page.',
+                  },
 }
 
 
 def validate_item(info_dict, value):
     if info_dict['type'] == 'string':
-        if isinstance(value, types.StringTypes):
+        if isinstance(value, six.string_types):
             return True
         return False
-    if info_dict['type'] == 'boolean':
+
+    elif info_dict['type'] == 'boolean':
         try:
             success = (0, 1, 'true', 'false').index(value)
             return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'enum':
         try:
             success = info_dict.enums.index(value)
             return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'integer':
         try:
-            if isinstance(value, types.IntegerType):
+            if isinstance(value, int):
                 return True
             else:
                 # coercing an int(value) into a string should catch utf8&string types, and fail on floats
@@ -596,14 +609,16 @@ def validate_item(info_dict, value):
                     return True
         except ValueError:
             return False
+
     elif info_dict['type'] == 'datetime':
         if isinstance(value, (datetime.date, datetime.datetime)):
             return True
-        if isinstance(value, types.StringTypes):
+        if isinstance(value, six.string_types):
             for test in regex_dates:
                 if re.match(regex_dates[test], value):
                     return True
             return False
+
     elif info_dict['type'] == 'url':
         if re.match(regex_url, value):
             return True
@@ -639,12 +654,14 @@ class OpenGraphItem(object):
             if field not in self._data:
                 self._data[field] = []
             else:
-                if not isinstance(self._data[field], types.ListType):
+                if not isinstance(self._data[field], list):
                     self._data[field] = [self._data[field], ]
             self._data[field].append(value)
 
     def validate(self, facebook=False, schema1=False, schema2=True):
-        errors = {'critical': {}, 'recommended': {}, }
+        errors = {'critical': {},
+                  'recommended': {},
+                  }
 
         def _errror(level, item, message):
             # if level not in errors:
@@ -700,8 +717,7 @@ class OpenGraphItem(object):
 
     def as_html(self, debug=False):
         output = []
-        _keys = self._data.keys()
-        _keys.sort()
+        _keys = sorted(self._data.keys())
         for k in _keys:
             v = self._data[k]
             _error = u''
@@ -710,7 +726,7 @@ class OpenGraphItem(object):
                     _error = u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][k])
                 elif k in self._errors['recommended']:
                     _error = u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][k])
-            if isinstance(v, types.ListType):
+            if isinstance(v, list):
                 for i in v:
                     output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(i), _error))
             else:
@@ -731,7 +747,7 @@ if __name__ == '__main__':
     ))
     status = a.validate()
     if status:
-        print "object ok"
+        print("object ok")
     else:
-        print "object not ok"
-    print a.as_html(debug=True)
+        print("object not ok")
+    print(a.as_html(debug=True))
