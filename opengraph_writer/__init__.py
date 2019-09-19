@@ -1,3 +1,4 @@
+from __future__ import print_function
 """
 ==============
 
@@ -43,11 +44,15 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
+__VERSION__ = '0.3.0'
+
+# stdlib
 import datetime
 import re
-import types
 
+# pypi
 from metadata_utils import html_attribute_escape
+import six
 
 
 # http://en.wikipedia.org/wiki/ISO_8601
@@ -575,7 +580,7 @@ facebook_extensions = {
 
 def validate_item(info_dict, value):
     if info_dict['type'] == 'string':
-        if isinstance(value, types.StringTypes):
+        if isinstance(value, six.string_types):
             return True
         return False
 
@@ -595,7 +600,7 @@ def validate_item(info_dict, value):
 
     elif info_dict['type'] == 'integer':
         try:
-            if isinstance(value, types.IntegerType):
+            if isinstance(value, int):
                 return True
             else:
                 # coercing an int(value) into a string should catch utf8&string types, and fail on floats
@@ -608,7 +613,7 @@ def validate_item(info_dict, value):
     elif info_dict['type'] == 'datetime':
         if isinstance(value, (datetime.date, datetime.datetime)):
             return True
-        if isinstance(value, types.StringTypes):
+        if isinstance(value, six.string_types):
             for test in regex_dates:
                 if re.match(regex_dates[test], value):
                     return True
@@ -649,7 +654,7 @@ class OpenGraphItem(object):
             if field not in self._data:
                 self._data[field] = []
             else:
-                if not isinstance(self._data[field], types.ListType):
+                if not isinstance(self._data[field], list):
                     self._data[field] = [self._data[field], ]
             self._data[field].append(value)
 
@@ -712,8 +717,7 @@ class OpenGraphItem(object):
 
     def as_html(self, debug=False):
         output = []
-        _keys = self._data.keys()
-        _keys.sort()
+        _keys = sorted(self._data.keys())
         for k in _keys:
             v = self._data[k]
             _error = u''
@@ -722,7 +726,7 @@ class OpenGraphItem(object):
                     _error = u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][k])
                 elif k in self._errors['recommended']:
                     _error = u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][k])
-            if isinstance(v, types.ListType):
+            if isinstance(v, list):
                 for i in v:
                     output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(i), _error))
             else:
@@ -743,7 +747,7 @@ if __name__ == '__main__':
     ))
     status = a.validate()
     if status:
-        print "object ok"
+        print("object ok")
     else:
-        print "object not ok"
-    print a.as_html(debug=True)
+        print("object not ok")
+    print(a.as_html(debug=True))
