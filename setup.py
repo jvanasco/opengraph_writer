@@ -11,19 +11,12 @@ README = open(os.path.join(here, "README.md")).read()
 README = README.split("\n\n", 1)[0] + "\n"
 
 # store version in the init.py
-with open(os.path.join(os.path.dirname(__file__),
-                       'opengraph_writer',
-                       '__init__.py'
-                       )
-          ) as v_file:
-    VERSION = re.compile(
-        r".*__VERSION__ = '(.*?)'",
-        re.S).match(v_file.read()).group(1)
+with open(
+    os.path.join(os.path.dirname(__file__), "opengraph_writer", "__init__.py")
+) as v_file:
+    VERSION = re.compile(r".*__VERSION__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
-requires = [
-    "metadata_utils >=0.1.1",
-    'six',
-]
+requires = ["metadata_utils >=0.1.1", "six"]
 
 setup(
     name="opengraph_writer",
@@ -35,9 +28,9 @@ setup(
     long_description=README,
     zip_safe=False,
     keywords="web pyramid facebook opengraph open graph",
-    tests_require = requires,
-    install_requires = requires,
-    test_suite='tests',
+    tests_require=requires,
+    install_requires=requires,
+    test_suite="tests",
     packages=find_packages(),
     include_package_data=True,
     classifiers=[

@@ -10,7 +10,4 @@ def includeme(config):
     """the pyramid includeme command
     including this will automatically setup the OpenGraphItem object for every request
     """
-    config.add_request_method(new_OpenGraphItem,
-                              'opengraph_item',
-                              reify=True,
-                              )
+    config.add_request_method(new_OpenGraphItem, "opengraph_item", reify=True)

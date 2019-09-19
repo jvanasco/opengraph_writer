@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 """
 ==============
 
@@ -44,7 +45,7 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
-__VERSION__ = '0.3.0'
+__VERSION__ = "0.3.0"
 
 # stdlib
 import datetime
@@ -58,16 +59,17 @@ import six
 # http://en.wikipedia.org/wiki/ISO_8601
 regex_dates = {
     #  Date    2012-02-02
-    'date': re.compile('^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])$'),
-
+    "date": re.compile("^([0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])$"),
     # Ordinal date:    2012-033
-    'ordinal_date': re.compile('^([0-9]{4})-(36[0-6]|3[0-5][0-9]|[12][0-9]{2}|0[1-9][0-9]|00[1-9])$'),
-
+    "ordinal_date": re.compile(
+        "^([0-9]{4})-(36[0-6]|3[0-5][0-9]|[12][0-9]{2}|0[1-9][0-9]|00[1-9])$"
+    ),
     # Date with week number:   2012-W05-4
-    'week_number': re.compile('^([0-9]{4})-?W(5[0-3]|[1-4][0-9]|0[1-9])-?([1-7])$'),
-
+    "week_number": re.compile("^([0-9]{4})-?W(5[0-3]|[1-4][0-9]|0[1-9])-?([1-7])$"),
     # Separate date and time in UTC:   2012-02-02 15:29Z
-    'datetime, UTC': re.compile('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$'),
+    "datetime, UTC": re.compile(
+        "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$"
+    ),
 }
 
 
@@ -76,529 +78,515 @@ regex_url = re.compile("""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
 
 
 og_properties = {
-    'og:title': {
-        'required': True,
-        'description': 'The title of your object as it should appear within the graph, e.g., "The Rock".',
-        'type': 'string',
+    "og:title": {
+        "required": True,
+        "description": 'The title of your object as it should appear within the graph, e.g., "The Rock".',
+        "type": "string",
     },
-    'og:type': {
-        'required': True,
-        'description': 'The type of your object, e.g., "movie". See the complete list of supported types.',
-        'type': 'string',
-        'valid_types-1': {
-            'activity': {'grouping': 'Activities'},
-            'sport': {'grouping': 'Activities'},
-            'bar': {'grouping': 'Businesses'},
-            'company': {'grouping': 'Businesses'},
-            'cafe': {'grouping': 'Businesses'},
-            'hotel': {'grouping': 'Businesses'},
-            'restaurant': {'grouping': 'Businesses'},
-            'cause': {'grouping': 'Groups'},
-            'sports_league': {'grouping': 'Groups'},
-            'sports_team': {'grouping': 'Groups'},
-            'band': {'grouping': 'Organizations'},
-            'government': {'grouping': 'Organizations'},
-            'non_profit': {'grouping': 'Organizations'},
-            'school': {'grouping': 'Organizations'},
-            'university': {'grouping': 'Organizations'},
-            'actor': {'grouping': 'People'},
-            'athlete': {'grouping': 'People'},
-            'author': {'grouping': 'People '},
-            'director': {'grouping': 'People'},
-            'musician': {'grouping': 'People'},
-            'politician': {'grouping': 'People'},
-            'public_figure': {'grouping': 'People'},
-            'city': {'grouping': 'Places'},
-            'country': {'grouping': 'Places'},
-            'landmark': {'grouping': 'Places'},
-            'state_province': {'grouping': 'Places'},
-            'album': {'grouping': 'Products and Entertainment'},
-            'book': {'grouping': 'Products and Entertainment'},
-            'drink': {'grouping': 'Products and Entertainment'},
-            'food': {'grouping': 'Products and Entertainment'},
-            'game': {'grouping': 'Products and Entertainment'},
-            'product': {'grouping': 'Products and Entertainment'},
-            'song': {'grouping': 'Products and Entertainment'},
-            'movie': {'grouping': 'Products and Entertainment'},
-            'tv_show': {'grouping': 'Products and Entertainment'},
-            'blog': {'grouping': 'Websites '},
-            'website': {'grouping': 'Websites'},
-            'article': {'grouping': 'Websites'},
-            'game.achievement': {
-                'grouping': 'Game',
-                'properties': {
-                    'game:points': {'description': 'POINTS_FOR_ACHIEVEMENT'},
+    "og:type": {
+        "required": True,
+        "description": 'The type of your object, e.g., "movie". See the complete list of supported types.',
+        "type": "string",
+        "valid_types-1": {
+            "activity": {"grouping": "Activities"},
+            "sport": {"grouping": "Activities"},
+            "bar": {"grouping": "Businesses"},
+            "company": {"grouping": "Businesses"},
+            "cafe": {"grouping": "Businesses"},
+            "hotel": {"grouping": "Businesses"},
+            "restaurant": {"grouping": "Businesses"},
+            "cause": {"grouping": "Groups"},
+            "sports_league": {"grouping": "Groups"},
+            "sports_team": {"grouping": "Groups"},
+            "band": {"grouping": "Organizations"},
+            "government": {"grouping": "Organizations"},
+            "non_profit": {"grouping": "Organizations"},
+            "school": {"grouping": "Organizations"},
+            "university": {"grouping": "Organizations"},
+            "actor": {"grouping": "People"},
+            "athlete": {"grouping": "People"},
+            "author": {"grouping": "People "},
+            "director": {"grouping": "People"},
+            "musician": {"grouping": "People"},
+            "politician": {"grouping": "People"},
+            "public_figure": {"grouping": "People"},
+            "city": {"grouping": "Places"},
+            "country": {"grouping": "Places"},
+            "landmark": {"grouping": "Places"},
+            "state_province": {"grouping": "Places"},
+            "album": {"grouping": "Products and Entertainment"},
+            "book": {"grouping": "Products and Entertainment"},
+            "drink": {"grouping": "Products and Entertainment"},
+            "food": {"grouping": "Products and Entertainment"},
+            "game": {"grouping": "Products and Entertainment"},
+            "product": {"grouping": "Products and Entertainment"},
+            "song": {"grouping": "Products and Entertainment"},
+            "movie": {"grouping": "Products and Entertainment"},
+            "tv_show": {"grouping": "Products and Entertainment"},
+            "blog": {"grouping": "Websites "},
+            "website": {"grouping": "Websites"},
+            "article": {"grouping": "Websites"},
+            "game.achievement": {
+                "grouping": "Game",
+                "properties": {
+                    "game:points": {"description": "POINTS_FOR_ACHIEVEMENT"}
                 },
             },
         },
-        'valid_types-2': {
-            'website': {
-                'namespace': 'http://ogp.me/ns/website#',
-                'properties': {}
-            },
-            'article': {
-                'namespace': 'http://ogp.me/ns/article#',
-                'properties': {
-                    'article:published_time': {
-                        'type': 'datetime',
-                        'description': 'When the article was first published.'
+        "valid_types-2": {
+            "website": {"namespace": "http://ogp.me/ns/website#", "properties": {}},
+            "article": {
+                "namespace": "http://ogp.me/ns/article#",
+                "properties": {
+                    "article:published_time": {
+                        "type": "datetime",
+                        "description": "When the article was first published.",
                     },
-                    'article:modified_time': {
-                        'type': 'datetime',
-                        'description': 'When the article was last changed.'
+                    "article:modified_time": {
+                        "type": "datetime",
+                        "description": "When the article was last changed.",
                     },
-                    'article:expiration_time': {
-                        'type': 'datetime',
-                        'description': 'When the article is out of date after.'
+                    "article:expiration_time": {
+                        "type": "datetime",
+                        "description": "When the article is out of date after.",
                     },
-                    'article:author': {
-                        'type': 'profile',
-                        'description': 'Writers of the article.',
-                        'array_allowed': True
+                    "article:author": {
+                        "type": "profile",
+                        "description": "Writers of the article.",
+                        "array_allowed": True,
                     },
-                    'article:section': {
-                        'type': 'string',
-                        'description': 'A high-level section name. E.g. Technology'
+                    "article:section": {
+                        "type": "string",
+                        "description": "A high-level section name. E.g. Technology",
                     },
-                    'article:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this article.',
-                        'array_allowed': True
-                    },
-                }
-            },
-            'book': {
-                'namespace': 'http://ogp.me/ns/book#',
-                'properties': {
-                    'book:author': {
-                        'type': 'profile',
-                        'description': 'Who wrote this book.',
-                        'array_allowed': True
-                    },
-                    'book:isbn': {
-                        'type': 'string',
-                        'description': 'The ISBN'
-                    },
-                    'book:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the book was released.'
-                    },
-                    'book:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this book.',
-                        'array_allowed': True
-                    },
-                }
-            },
-            'profile': {
-                'namespace': 'http://ogp.me/ns/profile#',
-                'properties': {
-                    'profile:first_name': {
-                        'type': 'string',
-                        'description': 'first name'
-                    },
-                    'profile:last_name': {
-                        'type': 'string',
-                        'description': 'last name'
-                    },
-                    'profile:username': {
-                        'type': 'string',
-                        'description': 'A short unique string to identify them.'
-                    },
-                    'profile:gender': {
-                        'type': 'enum',
-                        'enums': ['male', 'female'],
-                        'description': 'Their gender'
-                    },
-                }
-            },
-            'video.movie': {
-                'namespace': 'http://ogp.me/ns/video#',
-                'properties': {
-                    'video:actor': {
-                        'type': 'profile',
-                        'description': 'actors in the movie',
-                        'array_allowed': True
-                    },
-                    'video:actor:role': {
-                        'type': 'string',
-                        'description': 'the role they played'
-                    },
-                    'video:director': {
-                        'type': 'profile',
-                        'description': 'directors of the movie',
-                        'array_allowed': True
-                    },
-                    'video:writer': {
-                        'type': 'profile',
-                        'description': 'writers of the movie',
-                        'array_allowed': True
-                    },
-                    'video:duration': {
-                        'type': 'integer',
-                        'description': 'The movie\'s length in seconds',
-                    },
-                    'video:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the movie was released',
-                    },
-                    'video:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this video.',
-                        'array_allowed': True
+                    "article:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this article.",
+                        "array_allowed": True,
                     },
                 },
             },
-            'video.episode': {
-                'namespace': 'http://ogp.me/ns/video#',
-                'properties': {
-                    'video:actor': {
-                        'type': 'profile',
-                        'description': 'actors in the movie',
-                        'array_allowed': True
+            "book": {
+                "namespace": "http://ogp.me/ns/book#",
+                "properties": {
+                    "book:author": {
+                        "type": "profile",
+                        "description": "Who wrote this book.",
+                        "array_allowed": True,
                     },
-                    'video:actor:role': {
-                        'type': 'string',
-                        'description': 'the role they played'
+                    "book:isbn": {"type": "string", "description": "The ISBN"},
+                    "book:release_date": {
+                        "type": "datetime",
+                        "description": "The date the book was released.",
                     },
-                    'video:director': {
-                        'type': 'profile',
-                        'description': 'directors of the movie',
-                        'array_allowed': True
-                    },
-                    'video:writer': {
-                        'type': 'profile',
-                        'description': 'writers of the movie',
-                        'array_allowed': True
-                    },
-                    'video:duration': {
-                        'type': 'integer',
-                        'description': 'The movie\'s length in seconds',
-                    },
-                    'video:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the movie was released',
-                    },
-                    'video:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this video.',
-                        'array_allowed': True
-                    },
-                    'video:series': {
-                        'type': 'video.tv_show',
-                        'description': 'Which series this episode belongs to.'
+                    "book:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this book.",
+                        "array_allowed": True,
                     },
                 },
             },
-            'video.tv_show': {
-                'namespace': 'http://ogp.me/ns/video#',
-                'properties': {
-                    'video:actor': {
-                        'type': 'profile',
-                        'description': 'actors in the movie',
-                        'array_allowed': True
+            "profile": {
+                "namespace": "http://ogp.me/ns/profile#",
+                "properties": {
+                    "profile:first_name": {
+                        "type": "string",
+                        "description": "first name",
                     },
-                    'video:actor:role': {
-                        'type': 'string',
-                        'description': 'the role they played'
+                    "profile:last_name": {"type": "string", "description": "last name"},
+                    "profile:username": {
+                        "type": "string",
+                        "description": "A short unique string to identify them.",
                     },
-                    'video:director': {
-                        'type': 'profile',
-                        'description': 'directors of the movie',
-                        'array_allowed': True
-                    },
-                    'video:writer': {
-                        'type': 'profile',
-                        'description': 'writers of the movie',
-                        'array_allowed': True
-                    },
-                    'video:duration': {
-                        'type': 'integer',
-                        'description': 'The movie\'s length in seconds',
-                    },
-                    'video:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the movie was released',
-                    },
-                    'video:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this video.',
-                        'array_allowed': True
+                    "profile:gender": {
+                        "type": "enum",
+                        "enums": ["male", "female"],
+                        "description": "Their gender",
                     },
                 },
             },
-            'video.other': {
-                'namespace': 'http://ogp.me/ns/video#',
-                'properties': {
-                    'video:actor': {
-                        'type': 'profile',
-                        'description': 'actors in the movie',
-                        'array_allowed': True
+            "video.movie": {
+                "namespace": "http://ogp.me/ns/video#",
+                "properties": {
+                    "video:actor": {
+                        "type": "profile",
+                        "description": "actors in the movie",
+                        "array_allowed": True,
                     },
-                    'video:actor:role': {
-                        'type': 'string',
-                        'description': 'the role they played'
+                    "video:actor:role": {
+                        "type": "string",
+                        "description": "the role they played",
                     },
-                    'video:director': {
-                        'type': 'profile',
-                        'description': 'directors of the movie',
-                        'array_allowed': True
+                    "video:director": {
+                        "type": "profile",
+                        "description": "directors of the movie",
+                        "array_allowed": True,
                     },
-                    'video:writer': {
-                        'type': 'profile',
-                        'description': 'writers of the movie',
-                        'array_allowed': True
+                    "video:writer": {
+                        "type": "profile",
+                        "description": "writers of the movie",
+                        "array_allowed": True,
                     },
-                    'video:duration': {
-                        'type': 'integer',
-                        'description': 'The movie\'s length in seconds',
+                    "video:duration": {
+                        "type": "integer",
+                        "description": "The movie's length in seconds",
                     },
-                    'video:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the movie was released',
+                    "video:release_date": {
+                        "type": "datetime",
+                        "description": "The date the movie was released",
                     },
-                    'video:tag': {
-                        'type': 'string',
-                        'description': 'Tag words associated with this video.',
-                        'array_allowed': True
+                    "video:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this video.",
+                        "array_allowed": True,
                     },
                 },
             },
-            'music.song': {
-                'namespace': 'http://ogp.me/ns/music#',
-                'properties': {
-                    'music:duration': {
-                        'type': 'integer',
-                        'description': 'The song\'s length in seconds'
+            "video.episode": {
+                "namespace": "http://ogp.me/ns/video#",
+                "properties": {
+                    "video:actor": {
+                        "type": "profile",
+                        "description": "actors in the movie",
+                        "array_allowed": True,
                     },
-                    'music:album': {
-                        'type': 'music.album',
-                        'description': 'The album this song is from.',
-                        'array_allowed': True
+                    "video:actor:role": {
+                        "type": "string",
+                        "description": "the role they played",
                     },
-                    'music:album:disc': {
-                        'type': 'integer',
-                        'description': 'Which disc of the album this song is on'
+                    "video:director": {
+                        "type": "profile",
+                        "description": "directors of the movie",
+                        "array_allowed": True,
                     },
-                    'music:album:track': {
-                        'type': 'integer',
-                        'description': 'Which track this song is'
+                    "video:writer": {
+                        "type": "profile",
+                        "description": "writers of the movie",
+                        "array_allowed": True,
                     },
-                    'music:musician': {
-                        'type': 'profile',
-                        'description': 'The musician that made this song',
-                        'array_allowed': True
+                    "video:duration": {
+                        "type": "integer",
+                        "description": "The movie's length in seconds",
                     },
-                }
+                    "video:release_date": {
+                        "type": "datetime",
+                        "description": "The date the movie was released",
+                    },
+                    "video:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this video.",
+                        "array_allowed": True,
+                    },
+                    "video:series": {
+                        "type": "video.tv_show",
+                        "description": "Which series this episode belongs to.",
+                    },
+                },
             },
-            'music.album': {
-                'namespace': 'http://ogp.me/ns/music#',
-                'properties': {
-                    'music:song': {
-                        'type': 'music.song',
-                        'description': 'The song on this album.',
+            "video.tv_show": {
+                "namespace": "http://ogp.me/ns/video#",
+                "properties": {
+                    "video:actor": {
+                        "type": "profile",
+                        "description": "actors in the movie",
+                        "array_allowed": True,
                     },
-                    'music:song:disc': {
-                        'type': 'integer',
-                        'description': 'the disc the song is on for the album'
+                    "video:actor:role": {
+                        "type": "string",
+                        "description": "the role they played",
                     },
-                    'music:song:track': {
-                        'type': 'integer',
-                        'description': 'the track number the song is on for the album'
+                    "video:director": {
+                        "type": "profile",
+                        "description": "directors of the movie",
+                        "array_allowed": True,
                     },
-                    'music:musician': {
-                        'type': 'profile',
-                        'description': 'The musician that made this song'
+                    "video:writer": {
+                        "type": "profile",
+                        "description": "writers of the movie",
+                        "array_allowed": True,
                     },
-                    'music:release_date': {
-                        'type': 'datetime',
-                        'description': 'The date the album was released.'
+                    "video:duration": {
+                        "type": "integer",
+                        "description": "The movie's length in seconds",
                     },
-                }
+                    "video:release_date": {
+                        "type": "datetime",
+                        "description": "The date the movie was released",
+                    },
+                    "video:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this video.",
+                        "array_allowed": True,
+                    },
+                },
             },
-            'music.playlist': {
-                'namespace': 'http://ogp.me/ns/music#',
-                'properties': {
-                    'music:song': {
-                        'type': 'music.song',
-                        'description': 'The song',
+            "video.other": {
+                "namespace": "http://ogp.me/ns/video#",
+                "properties": {
+                    "video:actor": {
+                        "type": "profile",
+                        "description": "actors in the movie",
+                        "array_allowed": True,
                     },
-                    'music:song:disc': {
-                        'type': 'integer',
-                        'description': 'the disc the song is on for the album'
+                    "video:actor:role": {
+                        "type": "string",
+                        "description": "the role they played",
                     },
-                    'music:song:track': {
-                        'type': 'integer',
-                        'description': 'the track number the song is on for the album'
+                    "video:director": {
+                        "type": "profile",
+                        "description": "directors of the movie",
+                        "array_allowed": True,
                     },
-                    'music:creator': {
-                        'type': 'profile',
-                        'description': 'The creator of this playlist.'
+                    "video:writer": {
+                        "type": "profile",
+                        "description": "writers of the movie",
+                        "array_allowed": True,
+                    },
+                    "video:duration": {
+                        "type": "integer",
+                        "description": "The movie's length in seconds",
+                    },
+                    "video:release_date": {
+                        "type": "datetime",
+                        "description": "The date the movie was released",
+                    },
+                    "video:tag": {
+                        "type": "string",
+                        "description": "Tag words associated with this video.",
+                        "array_allowed": True,
+                    },
+                },
+            },
+            "music.song": {
+                "namespace": "http://ogp.me/ns/music#",
+                "properties": {
+                    "music:duration": {
+                        "type": "integer",
+                        "description": "The song's length in seconds",
+                    },
+                    "music:album": {
+                        "type": "music.album",
+                        "description": "The album this song is from.",
+                        "array_allowed": True,
+                    },
+                    "music:album:disc": {
+                        "type": "integer",
+                        "description": "Which disc of the album this song is on",
+                    },
+                    "music:album:track": {
+                        "type": "integer",
+                        "description": "Which track this song is",
+                    },
+                    "music:musician": {
+                        "type": "profile",
+                        "description": "The musician that made this song",
+                        "array_allowed": True,
+                    },
+                },
+            },
+            "music.album": {
+                "namespace": "http://ogp.me/ns/music#",
+                "properties": {
+                    "music:song": {
+                        "type": "music.song",
+                        "description": "The song on this album.",
+                    },
+                    "music:song:disc": {
+                        "type": "integer",
+                        "description": "the disc the song is on for the album",
+                    },
+                    "music:song:track": {
+                        "type": "integer",
+                        "description": "the track number the song is on for the album",
+                    },
+                    "music:musician": {
+                        "type": "profile",
+                        "description": "The musician that made this song",
+                    },
+                    "music:release_date": {
+                        "type": "datetime",
+                        "description": "The date the album was released.",
+                    },
+                },
+            },
+            "music.playlist": {
+                "namespace": "http://ogp.me/ns/music#",
+                "properties": {
+                    "music:song": {"type": "music.song", "description": "The song"},
+                    "music:song:disc": {
+                        "type": "integer",
+                        "description": "the disc the song is on for the album",
+                    },
+                    "music:song:track": {
+                        "type": "integer",
+                        "description": "the track number the song is on for the album",
+                    },
+                    "music:creator": {
+                        "type": "profile",
+                        "description": "The creator of this playlist.",
+                    },
+                },
+            },
+            "music.radio_station": {
+                "namespace": "http://ogp.me/ns/music#",
+                "properties": {
+                    "music:creator": {
+                        "type": "profile",
+                        "description": "The creator of this station.",
                     }
                 },
             },
-            'music.radio_station': {
-                'namespace': 'http://ogp.me/ns/music#',
-                'properties': {
-                    'music:creator': {
-                        'type': 'profile',
-                        'description': 'The creator of this station.'
-                    },
-                },
-            },
-
-        }
+        },
     },
-    'og:image': {
-        'required': True,
-        'type': 'url',
-        'description': 'An image URL which should represent your object within the graph. The image must be at least 50px by 50px and have a maximum aspect ratio of 3:1. We support PNG, JPEG and GIF formats. You may include multiple og:image tags to associate multiple images with your page.',
-        'properties': {
-            'og:image:url': {
-                'description': 'Identical to og:image.',
-                'type': 'url',
+    "og:image": {
+        "required": True,
+        "type": "url",
+        "description": "An image URL which should represent your object within the graph. The image must be at least 50px by 50px and have a maximum aspect ratio of 3:1. We support PNG, JPEG and GIF formats. You may include multiple og:image tags to associate multiple images with your page.",
+        "properties": {
+            "og:image:url": {"description": "Identical to og:image.", "type": "url"},
+            "og:image:secure_url": {
+                "description": " An alternate url to use if the webpage requires HTTPS.",
+                "type": "url",
             },
-            'og:image:secure_url': {
-                'description': ' An alternate url to use if the webpage requires HTTPS.',
-                'type': 'url',
+            "og:image:type": {
+                "description": "A MIME type for this image.",
+                "type": "string",
             },
-            'og:image:type': {
-                'description': 'A MIME type for this image.',
-                'type': 'string',
+            "og:image:width": {
+                "description": "The number of pixels wide.",
+                "type": "integer",
             },
-            'og:image:width': {
-                'description': 'The number of pixels wide.',
-                'type': 'integer',
+            "og:image:height": {
+                "description": "The number of pixels high.",
+                "type": "integer",
             },
-            'og:image:height': {
-                'description': 'The number of pixels high.',
-                'type': 'integer',
-            },
-        }
+        },
     },
-    'og:url': {
-        'required': True,
-        'description': 'The canonical URL of your object that will be used as its permanent ID in the graph, e.g., http://www.imdb.com/title/tt0117500/',
-        'type': 'url',
+    "og:url": {
+        "required": True,
+        "description": "The canonical URL of your object that will be used as its permanent ID in the graph, e.g., http://www.imdb.com/title/tt0117500/",
+        "type": "url",
     },
-    'og:site_name': {
-        'required': False,
-        'description': 'A human-readable name for your site, e.g., "IMDb".',
-        'type': 'string',
+    "og:site_name": {
+        "required": False,
+        "description": 'A human-readable name for your site, e.g., "IMDb".',
+        "type": "string",
     },
-    'og:description': {
-        'required': False,
-        'description': 'A one to two sentence description of your page.',
-        'type': 'string',
+    "og:description": {
+        "required": False,
+        "description": "A one to two sentence description of your page.",
+        "type": "string",
     },
-    'og:isbn': {
-        'required': False,
-        'description': 'For products which have a UPC code or ISBN number, you can specify them using the og:upc and og:isbn properties. These properties help uniquely identify products.',
-        'type': 'string',
+    "og:isbn": {
+        "required": False,
+        "description": "For products which have a UPC code or ISBN number, you can specify them using the og:upc and og:isbn properties. These properties help uniquely identify products.",
+        "type": "string",
     },
-    'og:upc': {
-        'required': False,
-        'description': 'For products which have a UPC code or ISBN number, you can specify them using the og:upc and og:isbn properties. These properties help uniquely identify products.',
-        'type': 'string',
+    "og:upc": {
+        "required": False,
+        "description": "For products which have a UPC code or ISBN number, you can specify them using the og:upc and og:isbn properties. These properties help uniquely identify products.",
+        "type": "string",
     },
-    'og:audio': {
-        'required': False,
-        'description': 'A URL to an audio file to accompany this object.',
-        'type': 'url',
-        'properties': {
-            'og:audio:secure_url': {
-                'description': ' An alternate url to use if the webpage requires HTTPS.',
-                'type': 'url',
+    "og:audio": {
+        "required": False,
+        "description": "A URL to an audio file to accompany this object.",
+        "type": "url",
+        "properties": {
+            "og:audio:secure_url": {
+                "description": " An alternate url to use if the webpage requires HTTPS.",
+                "type": "url",
             },
-            'og:audio:type': {
-                'description': 'A MIME type for this audio.',
-                'type': 'string',
+            "og:audio:type": {
+                "description": "A MIME type for this audio.",
+                "type": "string",
             },
-            'og:audio:title': {
-                'description': 'NOT IN 2.0 SPEC -- song title',
-                'type': 'string',
+            "og:audio:title": {
+                "description": "NOT IN 2.0 SPEC -- song title",
+                "type": "string",
             },
-            'og:audio:artist': {
-                'description': 'NOT IN 2.0 SPEC -- song artist',
-                'type': 'string',
+            "og:audio:artist": {
+                "description": "NOT IN 2.0 SPEC -- song artist",
+                "type": "string",
             },
-            'og:audio:album': {
-                'description': 'NOT IN 2.0 SPEC -- song album',
-                'type': 'string',
+            "og:audio:album": {
+                "description": "NOT IN 2.0 SPEC -- song album",
+                "type": "string",
             },
-        }
+        },
     },
-    'og:determiner': {
-        'required': False,
-        'description': """The word that appears before this object's title in a sentence. An enum of (a, an, the, "", auto). If auto is chosen, the consumer of your data should chose between "a" or "an". Default is "" (blank).""",
-        'type': 'enum',
-        'enums': ('a', 'an', 'the', '', 'auto'),
+    "og:determiner": {
+        "required": False,
+        "description": """The word that appears before this object's title in a sentence. An enum of (a, an, the, "", auto). If auto is chosen, the consumer of your data should chose between "a" or "an". Default is "" (blank).""",
+        "type": "enum",
+        "enums": ("a", "an", "the", "", "auto"),
     },
-    'og:locale': {
-        'required': False,
-        'description': """The locale these tags are marked up in. Of the format language_TERRITORY. Default is en_US.""",
-        'type': 'string',
+    "og:locale": {
+        "required": False,
+        "description": """The locale these tags are marked up in. Of the format language_TERRITORY. Default is en_US.""",
+        "type": "string",
     },
-    'og:locale:alternate': {
-        'required': False,
-        'description': """An array of other locales this page is available in..""",
-        'type': 'string',
-        'array_allowed': True,
+    "og:locale:alternate": {
+        "required": False,
+        "description": """An array of other locales this page is available in..""",
+        "type": "string",
+        "array_allowed": True,
     },
-    'og:video': {
-        'required': False,
-        'description': 'A URL to a video file that complements this object. set content to url of video file. You may specify more than one og:video. If you specify more than one og:video, then og:video:type is required for each video. You must include a valid og:image for your video to be displayed in the news feed.',
-        'properties': {
-            'og:video:secure_url': {
-                'description': ' An alternate url to use if the webpage requires HTTPS.',
-                'type': 'url',
+    "og:video": {
+        "required": False,
+        "description": "A URL to a video file that complements this object. set content to url of video file. You may specify more than one og:video. If you specify more than one og:video, then og:video:type is required for each video. You must include a valid og:image for your video to be displayed in the news feed.",
+        "properties": {
+            "og:video:secure_url": {
+                "description": " An alternate url to use if the webpage requires HTTPS.",
+                "type": "url",
             },
-            'og:video:type': {
-                'description': 'A MIME type for this video.',
-                'type': 'string',
+            "og:video:type": {
+                "description": "A MIME type for this video.",
+                "type": "string",
             },
-            'og:video:width': {
-                'description': 'The number of pixels wide.',
-                'type': 'integer',
+            "og:video:width": {
+                "description": "The number of pixels wide.",
+                "type": "integer",
             },
-            'og:video:height': {
-                'description': 'The number of pixels high.',
-                'type': 'integer',
+            "og:video:height": {
+                "description": "The number of pixels high.",
+                "type": "integer",
             },
-        }
+        },
     },
 }
 facebook_extensions = {
-    'fb:admins': {'required': False,
-                  'description': 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>',
-                  },
-    'fb:app_id': {'required': False,
-                  'description': 'A Facebook Platform application ID that administers this page.',
-                  },
+    "fb:admins": {
+        "required": False,
+        "description": 'To associate the page with your Facebook account, add the additional property fb:admins to your page with a comma-separated list of the user IDs or usernames of the Facebook accounts who own the page, e.g.: <meta property="fb:admins" content="USER_ID1,USER_ID2"/>',
+    },
+    "fb:app_id": {
+        "required": False,
+        "description": "A Facebook Platform application ID that administers this page.",
+    },
 }
 
 
 def validate_item(info_dict, value):
-    if info_dict['type'] == 'string':
+    if info_dict["type"] == "string":
         if isinstance(value, six.string_types):
             return True
         return False
 
-    elif info_dict['type'] == 'boolean':
+    elif info_dict["type"] == "boolean":
         try:
-            success = (0, 1, 'true', 'false').index(value)
+            success = (0, 1, "true", "false").index(value)
             return True
         except ValueError:
             return False
 
-    elif info_dict['type'] == 'enum':
+    elif info_dict["type"] == "enum":
         try:
             success = info_dict.enums.index(value)
             return True
         except ValueError:
             return False
 
-    elif info_dict['type'] == 'integer':
+    elif info_dict["type"] == "integer":
         try:
             if isinstance(value, int):
                 return True
@@ -610,7 +598,7 @@ def validate_item(info_dict, value):
         except ValueError:
             return False
 
-    elif info_dict['type'] == 'datetime':
+    elif info_dict["type"] == "datetime":
         if isinstance(value, (datetime.date, datetime.datetime)):
             return True
         if isinstance(value, six.string_types):
@@ -619,12 +607,12 @@ def validate_item(info_dict, value):
                     return True
             return False
 
-    elif info_dict['type'] == 'url':
+    elif info_dict["type"] == "url":
         if re.match(regex_url, value):
             return True
         return False
 
-    elif info_dict['type'] == 'profile':
+    elif info_dict["type"] == "profile":
         # TO DO
         # this involves looking for other fields.
         return True
@@ -655,13 +643,11 @@ class OpenGraphItem(object):
                 self._data[field] = []
             else:
                 if not isinstance(self._data[field], list):
-                    self._data[field] = [self._data[field], ]
+                    self._data[field] = [self._data[field]]
             self._data[field].append(value)
 
     def validate(self, facebook=False, schema1=False, schema2=True):
-        errors = {'critical': {},
-                  'recommended': {},
-                  }
+        errors = {"critical": {}, "recommended": {}}
 
         def _errror(level, item, message):
             # if level not in errors:
@@ -670,45 +656,74 @@ class OpenGraphItem(object):
 
         for i in og_properties:
             # make sure that everything in og_properties which is required is present
-            if og_properties[i]['required'] and (i not in self._data):
-                _errror('critical', i, "Missing Required Element")
-            elif og_properties[i]['required'] and (i in self._data):
+            if og_properties[i]["required"] and (i not in self._data):
+                _errror("critical", i, "Missing Required Element")
+            elif og_properties[i]["required"] and (i in self._data):
                 if not validate_item(og_properties[i], self._data[i]):
-                    _errror('critical', i, "Required Element does not validate")
+                    _errror("critical", i, "Required Element does not validate")
             else:
                 if i in self._data:
                     if not validate_item(og_properties[i], self._data[i]):
-                        _errror('recommended', i, "non-required Element does not validate")
+                        _errror(
+                            "recommended", i, "non-required Element does not validate"
+                        )
 
-        if 'og:type' not in errors['critical'] and 'og:type' not in errors['recommended']:
+        if (
+            "og:type" not in errors["critical"]
+            and "og:type" not in errors["recommended"]
+        ):
             _error = None
             if schema1:
-                if self._data['og:type'] not in og_properties['og:type']['valid_types-1']:
-                    _errror('critical', 'og:type', "Invalid og:type")
+                if (
+                    self._data["og:type"]
+                    not in og_properties["og:type"]["valid_types-1"]
+                ):
+                    _errror("critical", "og:type", "Invalid og:type")
             elif schema2:
-                if self._data['og:type'] not in og_properties['og:type']['valid_types-2']:
-                    _errror('critical', 'og:type', "Invalid og:type")
-                for subtype in og_properties['og:type']['valid_types-2'][self._data['og:type']]['properties']:
-                    info = og_properties['og:type']['valid_types-2'][self._data['og:type']]
-                    info_dict = info['properties'][subtype]
+                if (
+                    self._data["og:type"]
+                    not in og_properties["og:type"]["valid_types-2"]
+                ):
+                    _errror("critical", "og:type", "Invalid og:type")
+                for subtype in og_properties["og:type"]["valid_types-2"][
+                    self._data["og:type"]
+                ]["properties"]:
+                    info = og_properties["og:type"]["valid_types-2"][
+                        self._data["og:type"]
+                    ]
+                    info_dict = info["properties"][subtype]
                     error = None
                     value = None
                     if subtype in self._data:
                         value = self._data[subtype]
-                    if 'required' in info and info['required']:
+                    if "required" in info and info["required"]:
                         if subtype not in og_properties:
-                            _errror('critical', '%s' % subtype, "Missing required subtype")
+                            _errror(
+                                "critical", "%s" % subtype, "Missing required subtype"
+                            )
                         elif not validate_item(info_dict, value):
-                            _errror('critical', '%s' % subtype, "Required subtype does not validate correctly")
+                            _errror(
+                                "critical",
+                                "%s" % subtype,
+                                "Required subtype does not validate correctly",
+                            )
                     else:
-                        if (subtype not in self._data):
-                            _errror('recommended', '%s' % subtype, "non-required subtype not included")
+                        if subtype not in self._data:
+                            _errror(
+                                "recommended",
+                                "%s" % subtype,
+                                "non-required subtype not included",
+                            )
                         else:
                             if not validate_item(info_dict, value):
-                                _errror('recommended', '%s' % subtype, "non-required subtype does not validate correctly")
+                                _errror(
+                                    "recommended",
+                                    "%s" % subtype,
+                                    "non-required subtype does not validate correctly",
+                                )
 
         self._errors = errors
-        if errors['critical']:
+        if errors["critical"]:
             return False
         return True
 
@@ -720,31 +735,43 @@ class OpenGraphItem(object):
         _keys = sorted(self._data.keys())
         for k in _keys:
             v = self._data[k]
-            _error = u''
+            _error = u""
             if debug:
-                if k in self._errors['critical']:
-                    _error = u' critical-error="%s"' % html_attribute_escape(self._errors['critical'][k])
-                elif k in self._errors['recommended']:
-                    _error = u' recommended-error="%s"' % html_attribute_escape(self._errors['recommended'][k])
+                if k in self._errors["critical"]:
+                    _error = u' critical-error="%s"' % html_attribute_escape(
+                        self._errors["critical"][k]
+                    )
+                elif k in self._errors["recommended"]:
+                    _error = u' recommended-error="%s"' % html_attribute_escape(
+                        self._errors["recommended"][k]
+                    )
             if isinstance(v, list):
                 for i in v:
-                    output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(i), _error))
+                    output.append(
+                        u"""<meta property="%s" content="%s"%s/>"""
+                        % (html_attribute_escape(k), html_attribute_escape(i), _error)
+                    )
             else:
-                output.append(u"""<meta property="%s" content="%s"%s/>""" % (html_attribute_escape(k), html_attribute_escape(v), _error))
-        output = u'\n'.join(output)
+                output.append(
+                    u"""<meta property="%s" content="%s"%s/>"""
+                    % (html_attribute_escape(k), html_attribute_escape(v), _error)
+                )
+        output = u"\n".join(output)
         return output
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     a = OpenGraphItem()
-    a.set('og:title', 'MyWebsite')
-    a.set('og:type', 'article')
-    a.set_many((
-        ('og:url', 'http://f.me'),
-        ('og:image', 'http://f.me/a.png'),
-        ('article:author', 'abc'),
-        ('article:published_time', '2012-01-10')
-    ))
+    a.set("og:title", "MyWebsite")
+    a.set("og:type", "article")
+    a.set_many(
+        (
+            ("og:url", "http://f.me"),
+            ("og:image", "http://f.me/a.png"),
+            ("article:author", "abc"),
+            ("article:published_time", "2012-01-10"),
+        )
+    )
     status = a.validate()
     if status:
         print("object ok")
