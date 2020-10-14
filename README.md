@@ -1,3 +1,5 @@
+![Python package](https://github.com/jvanasco/opengraph_writer/workflows/Python%20package/badge.svg)
+
 as posted on https://www.facebook.com/groups/opengraph/
 
 I started to build a python library to both manage writing open graph data, and do some lightweight verifications for offline debugging.
