@@ -14,10 +14,16 @@ README = README.split("\n\n", 1)[0] + "\n"
 with open(
     os.path.join(os.path.dirname(__file__), "opengraph_writer", "__init__.py")
 ) as v_file:
-    VERSION = re.compile(r".*__VERSION__ = '(.*?)'", re.S).match(v_file.read()).group(1)
+    VERSION = re.compile(r'.*__VERSION__ = "(.*?)"', re.S).match(v_file.read()).group(1)
 
-requires = ["metadata_utils >=0.1.1", "six"]
-
+requires = [
+    "metadata_utils>=0.1.1",
+    "six",
+]
+tests_require = []
+testing_extras = tests_require + [
+    "pytest",
+]
 setup(
     name="opengraph_writer",
     description="Lightweight open graph support for writing and validating objects",
@@ -28,8 +34,11 @@ setup(
     long_description=README,
     zip_safe=False,
     keywords="web pyramid facebook opengraph open graph",
-    tests_require=requires,
     install_requires=requires,
+    tests_require=requires,
+    extras_require={
+        "testing": testing_extras,
+    },
     test_suite="tests",
     packages=find_packages(),
     include_package_data=True,
