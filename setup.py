@@ -6,9 +6,15 @@ import re
 from setuptools import setup
 from setuptools import find_packages
 
-here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, "README.md")).read()
-README = README.split("\n\n", 1)[0] + "\n"
+
+long_description = (
+    description
+) = "Lightweight OpenGraph support for writing and validating objects."
+try:
+    here = os.path.abspath(os.path.dirname(__file__))
+    long_description = open(os.path.join(here, "README.md")).read()
+except:
+    pass
 
 # store version in the init.py
 with open(
@@ -20,20 +26,21 @@ requires = [
     "metadata_utils>=0.1.1",
     "six",
 ]
-tests_require = []
-testing_extras = tests_require + [
+tests_require = [
     "pytest",
+    "pyramid",
 ]
+testing_extras = tests_require + []
 setup(
     name="opengraph_writer",
-    description="Lightweight open graph support for writing and validating objects",
-    version=VERSION,
     url="https://github.com/jvanasco/opengraph_writer",
     author="Jonathan Vanasco",
     author_email="jonathan@findmeon.com",
-    long_description=README,
+    version=VERSION,
+    description=description,
+    long_description=long_description,
     zip_safe=False,
-    keywords="web pyramid facebook opengraph open graph",
+    keywords="facebook opengraph open graph web pyramid",
     install_requires=requires,
     tests_require=requires,
     extras_require={
