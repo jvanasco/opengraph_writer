@@ -3,6 +3,7 @@
 	* upgraded black; 20.8b1
 	* integrated with pre-commit
 	* cleanup, tox, github
+	* pyramid test
 
 0.3.0 -
 	* python3 official support
