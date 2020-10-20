@@ -6,20 +6,16 @@ import re
 from setuptools import setup
 from setuptools import find_packages
 
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 long_description = (
     description
 ) = "Lightweight OpenGraph support for writing and validating objects."
-try:
-    here = os.path.abspath(os.path.dirname(__file__))
-    long_description = open(os.path.join(here, "README.md")).read()
-except:
-    pass
+with open(os.path.join(HERE, "README.md")) as r_file:
+    long_description = r_file.read()
 
 # store version in the init.py
-with open(
-    os.path.join(os.path.dirname(__file__), "opengraph_writer", "__init__.py")
-) as v_file:
+with open(os.path.join(HERE, "opengraph_writer", "__init__.py")) as v_file:
     VERSION = re.compile(r'.*__VERSION__ = "(.*?)"', re.S).match(v_file.read()).group(1)
 
 requires = [

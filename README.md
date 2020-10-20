@@ -1,3 +1,6 @@
+opengraph_writer
+================
+
 ![Python package](https://github.com/jvanasco/opengraph_writer/workflows/Python%20package/badge.svg)
 
 About

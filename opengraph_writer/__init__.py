@@ -45,7 +45,7 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
-__VERSION__ = "0.3.1"
+__VERSION__ = "0.3.2"
 
 # stdlib
 import datetime
