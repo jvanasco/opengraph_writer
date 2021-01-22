@@ -35,6 +35,7 @@ setup(
     version=VERSION,
     description=description,
     long_description=long_description,
+    long_description_content_type="text/markdown",
     zip_safe=False,
     keywords="facebook opengraph open graph web pyramid",
     install_requires=requires,
