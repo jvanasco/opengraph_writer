@@ -1,14 +1,14 @@
 # stdlib
 import unittest
 
-# local package to test
-import opengraph_writer
-
-# pyramid testing requirements
+# pyramid testing requirements; pypi
 from pyramid import testing
 from pyramid.interfaces import IRequestExtensions
-from webob.multidict import MultiDict
 
+# from webob.multidict import MultiDict
+
+# local package
+import opengraph_writer
 
 # ==============================================================================
 
@@ -19,6 +19,9 @@ class TestSetupSimple(unittest.TestCase):
 
         # grab the config object, then modify in place
         settings = self.config.get_settings()
+        # mare sure we have it...
+        self.assertIsNotNone(settings)
+
         self.config.include("opengraph_writer.pyramid_helpers")
         self.context = testing.DummyResource()
         self.request = testing.DummyRequest()

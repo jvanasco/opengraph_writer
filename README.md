@@ -15,7 +15,6 @@ This library does the following:
 - VALIDATE the data, offering debug information on the object
 - RENDER the object as html, and optionally include debug data on incorrect elements
 
-
 This is currently aimed at "single object page data". It is not necessarily
 with multi-value items yet (such as multiple profiles or tracks on a single page).
 

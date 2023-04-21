@@ -1,3 +1,10 @@
+0.4.0
+    * typing support
+    * drop PY2
+    * drop PY3.5
+    * og_properties is deprecated in favor of OG_PROPERTIES
+    * redid validation logic
+
 0.3.3
 	packaging fix
 

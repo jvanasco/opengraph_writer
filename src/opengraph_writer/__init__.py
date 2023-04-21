@@ -11,7 +11,6 @@ The followig information about Open Graph 1.0 is copied verbatim from Facebook, 
 
          <meta property="og:title" content="The Rock"/>
 
-
     The Open Graph protocol defines four required properties:
 
         og:title - The title of your object as it should appear within the graph, e.g., "The Rock".
@@ -45,15 +44,21 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
-__VERSION__ = "0.3.3"
+__VERSION__ = "0.4.0"
 
 # stdlib
 import datetime
 import re
+import typing
 
 # pypi
 from metadata_utils import html_attribute_escape
-import six
+
+# typing
+_OG_KV = typing.Tuple[str, str]
+_OG_KV_MANY = typing.List[_OG_KV]
+_OG_SET = typing.Tuple[str, typing.Any]
+_OG_DATA = typing.Dict[str, typing.Any]
 
 
 # http://en.wikipedia.org/wiki/ISO_8601
@@ -74,10 +79,10 @@ regex_dates = {
 
 
 # basically just testing that the string starts with http/https, and has some resemeblence of a domain on it.  after an optional trailing slash, i don't need to make this super accurate
-regex_url = re.compile("""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
+regex_url = re.compile(r"""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
 
 
-og_properties = {
+OG_PROPERTIES: dict[str, dict] = {
     "og:title": {
         "required": True,
         "description": 'The title of your object as it should appear within the graph, e.g., "The Rock".',
@@ -565,23 +570,36 @@ facebook_extensions = {
     },
 }
 
+# deprecated
+og_properties = OG_PROPERTIES
 
-def validate_item(info_dict, value):
+
+class OGErrors(dict):
+    def __init__(self):
+        self["critical"] = {}
+        self["recommended"] = {}
+        self["not_validated"] = []
+
+
+def validate_item(
+    info_dict: typing.Dict[str, typing.Any],
+    value: typing.Any,
+) -> bool:
     if info_dict["type"] == "string":
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             return True
         return False
 
     elif info_dict["type"] == "boolean":
         try:
-            success = (0, 1, "true", "false").index(value)
+            _success = (0, 1, "true", "false").index(value)  # noqa: F841
             return True
         except ValueError:
             return False
 
     elif info_dict["type"] == "enum":
         try:
-            success = info_dict.enums.index(value)
+            _success = info_dict["enums"].index(value)  # noqa: F841
             return True
         except ValueError:
             return False
@@ -601,7 +619,7 @@ def validate_item(info_dict, value):
     elif info_dict["type"] == "datetime":
         if isinstance(value, (datetime.date, datetime.datetime)):
             return True
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             for test in regex_dates:
                 if re.match(regex_dates[test], value):
                     return True
@@ -613,29 +631,52 @@ def validate_item(info_dict, value):
         return False
 
     elif info_dict["type"] == "profile":
-        # TO DO
+        # TODO
         # this involves looking for other fields.
         return True
 
     return False
 
 
-class OpenGraphItem(object):
-    _data = None
-    _errors = None
+def stringify(value: typing.Any) -> str:
+    """turns a value into a string if needed"""
+    if isinstance(value, bool):
+        if value:
+            return "true"
+        return "false"
+    elif isinstance(value, datetime.datetime):
+        return value.isoformat()
+    elif isinstance(value, datetime.date):
+        return value.isoformat()
+    return value
 
-    def __init__(self, sets=None):
+
+class OpenGraphItem(object):
+    _data: _OG_DATA = {}
+    _errors: typing.Optional[OGErrors] = None
+
+    def __init__(
+        self,
+        sets: typing.Optional[_OG_KV_MANY] = None,
+    ) -> None:
         self._data = {}
-        self._errors = {}
         if sets:
             self.set_many(sets)
 
-    def set_many(self, pairs):
+    def set_many(
+        self,
+        pairs: _OG_KV_MANY,
+    ) -> None:
         for pair in pairs:
             (f, v) = pair
             self.set(f, v)
 
-    def set(self, field, value, append=False):
+    def set(
+        self,
+        field: str,
+        value: str,
+        append: bool = False,
+    ) -> None:
         if not append:
             self._data[field] = value
         else:
@@ -646,135 +687,169 @@ class OpenGraphItem(object):
                     self._data[field] = [self._data[field]]
             self._data[field].append(value)
 
-    def validate(self, facebook=False, schema1=False, schema2=True):
-        errors = {"critical": {}, "recommended": {}}
+    def validate(
+        self,
+        facebook: bool = False,
+        schema1: bool = False,
+        schema2: bool = True,
+    ) -> bool:
+        """
+        Validate the object
 
-        def _errror(level, item, message):
+        :param facebook: validate against the facebook extensions?
+        :type resp: bool
+        :param schema1: validate against schema1? Default: `False`.
+            This is likely the schema before opengraph was open sourced.
+            It is very basic, and only checks for a supported "og:type"
+        :type resp: bool
+        :param schema2: validate against schema2? Default: `True`
+            This appears to be the current opengraph protocol.
+            This will process both the og:type and the subtypes.
+        :type resp: bool
+
+        :rtype: bool
+        """
+        if facebook is True:
+            raise ValueError("Support for Facebook Extensions is not built yet")
+        if schema1 and schema2:
+            raise ValueError("Validate against either schema1 or schema2")
+
+        errors = OGErrors()
+
+        def _set_error(
+            level: str,
+            item: str,
+            message: str,
+        ) -> None:
             # if level not in errors:
             #    errors[level]= {}
             errors[level][item] = message
 
-        for i in og_properties:
-            # make sure that everything in og_properties which is required is present
-            if og_properties[i]["required"] and (i not in self._data):
-                _errror("critical", i, "Missing Required Element")
-            elif og_properties[i]["required"] and (i in self._data):
-                if not validate_item(og_properties[i], self._data[i]):
-                    _errror("critical", i, "Required Element does not validate")
+        validate_fields = set(self._data.keys())
+
+        # make sure that everything in OG_PROPERTIES:
+        # 1) is present if required
+        # 2) is valid if not required
+        # 3) is valid if not required
+        for i in OG_PROPERTIES:
+            if OG_PROPERTIES[i]["required"]:
+                if i not in self._data:
+                    _set_error("critical", i, "Missing Required Element")
+                else:
+                    # required; check validity
+                    validate_fields.remove(i)
+                    if not validate_item(OG_PROPERTIES[i], self._data[i]):
+                        _set_error("critical", i, "Required Element does not validate")
             else:
+                # not required; check validity
                 if i in self._data:
-                    if not validate_item(og_properties[i], self._data[i]):
-                        _errror(
+                    validate_fields.remove(i)
+                    if not validate_item(OG_PROPERTIES[i], self._data[i]):
+                        _set_error(
                             "recommended", i, "non-required Element does not validate"
                         )
 
-        if (
-            "og:type" not in errors["critical"]
-            and "og:type" not in errors["recommended"]
-        ):
-            _error = None
-            if schema1:
-                if (
-                    self._data["og:type"]
-                    not in og_properties["og:type"]["valid_types-1"]
-                ):
-                    _errror("critical", "og:type", "Invalid og:type")
-            elif schema2:
-                if (
-                    self._data["og:type"]
-                    not in og_properties["og:type"]["valid_types-2"]
-                ):
-                    _errror("critical", "og:type", "Invalid og:type")
-                for subtype in og_properties["og:type"]["valid_types-2"][
-                    self._data["og:type"]
-                ]["properties"]:
-                    info = og_properties["og:type"]["valid_types-2"][
-                        self._data["og:type"]
-                    ]
-                    info_dict = info["properties"][subtype]
-                    error = None
-                    value = None
-                    if subtype in self._data:
-                        value = self._data[subtype]
-                    if "required" in info and info["required"]:
-                        if subtype not in og_properties:
-                            _errror(
-                                "critical", "%s" % subtype, "Missing required subtype"
-                            )
-                        elif not validate_item(info_dict, value):
-                            _errror(
-                                "critical",
-                                "%s" % subtype,
-                                "Required subtype does not validate correctly",
-                            )
-                    else:
-                        if subtype not in self._data:
-                            _errror(
-                                "recommended",
-                                "%s" % subtype,
-                                "non-required subtype not included",
-                            )
+        og_type = self._data.get("og:type")
+
+        if schema1:
+            # schema1 only checks for validity of the valid type
+            if not og_type:
+                _set_error("critical", "og:type", "Missing og:type")
+            else:
+                if og_type not in OG_PROPERTIES["og:type"]["valid_types-1"]:
+                    _set_error("critical", "og:type", "Invalid og:type")
+
+        if schema2:
+            if not og_type:
+                _set_error("critical", "og:type", "Missing og:type")
+            else:
+                if og_type not in OG_PROPERTIES["og:type"]["valid_types-2"]:
+                    _set_error("critical", "og:type", "Invalid og:type")
+                else:
+                    # validate all the likely subtypes
+                    og_type_dict = OG_PROPERTIES["og:type"]["valid_types-2"][og_type]
+                    for subtype in OG_PROPERTIES["og:type"]["valid_types-2"][og_type][
+                        "properties"
+                    ]:
+                        subtype_dict = og_type_dict["properties"][subtype]
+                        value = None
+                        if subtype in self._data:
+                            value = self._data[subtype]
+                        if "required" in og_type_dict and og_type_dict["required"]:
+                            if subtype not in OG_PROPERTIES:
+                                _set_error(
+                                    "critical",
+                                    "%s" % subtype,
+                                    "Missing required subtype",
+                                )
+                            else:
+                                validate_fields.remove(subtype)
+                                if not validate_item(subtype_dict, value):
+                                    _set_error(
+                                        "critical",
+                                        "%s" % subtype,
+                                        "Required subtype does not validate correctly",
+                                    )
                         else:
-                            if not validate_item(info_dict, value):
-                                _errror(
+                            if subtype not in self._data:
+                                _set_error(
                                     "recommended",
                                     "%s" % subtype,
-                                    "non-required subtype does not validate correctly",
+                                    "non-required subtype not included",
                                 )
+                            else:
+                                validate_fields.remove(subtype)
+                                if not validate_item(subtype_dict, value):
+                                    _set_error(
+                                        "recommended",
+                                        "%s" % subtype,
+                                        "non-required subtype does not validate correctly",
+                                    )
 
+        if validate_fields:
+            errors["not_validated"] = list(validate_fields)
         self._errors = errors
         if errors["critical"]:
             return False
         return True
 
-    def errors(self):
+    def errors(self) -> OGErrors:
+        if self._errors is None:
+            raise ValueError("You must call `.validate()` first")
         return self._errors
 
-    def as_html(self, debug=False):
-        output = []
+    def as_html(
+        self,
+        debug: bool = False,
+    ) -> str:
+        _output = []
         _keys = sorted(self._data.keys())
+        if self._errors is None:
+            return ""
         for k in _keys:
             v = self._data[k]
-            _error = u""
+            _error = ""
             if debug:
                 if k in self._errors["critical"]:
-                    _error = u' critical-error="%s"' % html_attribute_escape(
+                    _error = ' critical-error="%s"' % html_attribute_escape(
                         self._errors["critical"][k]
                     )
                 elif k in self._errors["recommended"]:
-                    _error = u' recommended-error="%s"' % html_attribute_escape(
+                    _error = ' recommended-error="%s"' % html_attribute_escape(
                         self._errors["recommended"][k]
                     )
             if isinstance(v, list):
                 for i in v:
-                    output.append(
-                        u"""<meta property="%s" content="%s"%s/>"""
+                    i = stringify(i)
+                    _output.append(
+                        """<meta property="%s" content="%s"%s/>"""
                         % (html_attribute_escape(k), html_attribute_escape(i), _error)
                     )
             else:
-                output.append(
-                    u"""<meta property="%s" content="%s"%s/>"""
+                v = stringify(v)
+                _output.append(
+                    """<meta property="%s" content="%s"%s/>"""
                     % (html_attribute_escape(k), html_attribute_escape(v), _error)
                 )
-        output = u"\n".join(output)
+        output = "\n".join(_output)
         return output
-
-
-if __name__ == "__main__":
-    a = OpenGraphItem()
-    a.set("og:title", "MyWebsite")
-    a.set("og:type", "article")
-    a.set_many(
-        (
-            ("og:url", "http://f.me"),
-            ("og:image", "http://f.me/a.png"),
-            ("article:author", "abc"),
-            ("article:published_time", "2012-01-10"),
-        )
-    )
-    status = a.validate()
-    if status:
-        print("object ok")
-    else:
-        print("object not ok")
-    print(a.as_html(debug=True))

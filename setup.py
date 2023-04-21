@@ -3,8 +3,8 @@
 import os
 import re
 
-from setuptools import setup
 from setuptools import find_packages
+from setuptools import setup
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
@@ -19,8 +19,7 @@ with open(os.path.join(HERE, "src", "opengraph_writer", "__init__.py")) as v_fil
     VERSION = re.compile(r'.*__VERSION__ = "(.*?)"', re.S).match(v_file.read()).group(1)
 
 requires = [
-    "metadata_utils>=0.1.1",
-    "six",
+    "metadata_utils>=0.2.0",
 ]
 tests_require = [
     "pytest",
@@ -37,6 +36,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     zip_safe=False,
+    python_requires=">=3.6",
     keywords="facebook opengraph open graph web pyramid",
     install_requires=requires,
     tests_require=requires,
@@ -48,12 +48,18 @@ setup(
         where="src",
     ),
     package_dir={"": "src"},
+    package_data={"metadata_utils": ["py.typed"]},
     include_package_data=True,
     classifiers=[
         "Intended Audience :: Developers",
         "Framework :: Pyramid",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     license="MIT",
