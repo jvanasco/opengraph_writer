@@ -82,7 +82,7 @@ regex_dates = {
 regex_url = re.compile(r"""^http[s]?:\/\/[a-z0-9.\-]+[.][a-z]{2,4}\/?""")
 
 
-OG_PROPERTIES: dict[str, dict] = {
+OG_PROPERTIES: typing.Dict[str, dict] = {
     "og:title": {
         "required": True,
         "description": 'The title of your object as it should appear within the graph, e.g., "The Rock".',
