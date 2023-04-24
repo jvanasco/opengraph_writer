@@ -1,0 +1,9 @@
+TODO
+====
+
+Logic
+-----
+
+* calls to .validate() should have better logic, perhaps a way to strictly
+  validate and not raise exceptions if there are unsupported elements that were
+  not validated by default. (allowing a `strict=True` flag)
