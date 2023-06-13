@@ -48,7 +48,7 @@ setup(
         where="src",
     ),
     package_dir={"": "src"},
-    package_data={"metadata_utils": ["py.typed"]},
+    package_data={"opengraph_writer": ["py.typed"]},
     include_package_data=True,
     classifiers=[
         "Intended Audience :: Developers",
