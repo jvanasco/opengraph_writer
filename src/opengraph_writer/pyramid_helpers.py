@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 from . import OpenGraphItem
 
 if TYPE_CHECKING:
-    from pyramid.config import Configurator  # type: ignore[import]
-    from pyramid.request import Request  # type: ignore[import]
+    from pyramid.config import Configurator
+    from pyramid.request import Request
 
 # ==============================================================================
 
