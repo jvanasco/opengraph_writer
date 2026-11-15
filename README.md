@@ -15,8 +15,8 @@ This library does the following:
 - VALIDATE the data, offering debug information on the object
 - RENDER the object as html, and optionally include debug data on incorrect elements
 
-This is currently aimed at "single object page data". It is not necessarily
-with multi-value items yet (such as multiple profiles or tracks on a single page).
+Each `OpenGraphItem` represents one object. A property can have multiple
+values, such as several images for the same page.
 
 Most of the validation routines were derived from regexing the `https://ogp.me`
 site into a Python dict, and researching what they are supposed to do.
@@ -37,11 +37,36 @@ Documentation
 
 The Python file contains extensive inline documentation.
 
+### Multiple images
+
+Use `append=True` to add another value to the same property. Each image is
+validated individually, and the rendered tags keep the order in which the
+images were added.
+
+```python
+from opengraph_writer import OpenGraphItem
+
+item = OpenGraphItem(
+    [
+        ("og:title", "Example page"),
+        ("og:type", "website"),
+        ("og:url", "https://example.com/page"),
+        ("og:image", "https://example.com/cover.jpg"),
+    ]
+)
+item.set("og:image", "https://example.com/detail.jpg", append=True)
+
+if item.validate():
+    print(item.as_html())
+```
+
 
 Contributions Welcome!
 ======================
 
-If anyone wants to fork and tackle the multiple value problem, please do.
+The test matrix covers CPython 3.6 through 3.15. Run the tests for your
+active Python interpreter with `tox -e py`. The run writes its HTML coverage
+report to `htmlcov/index.html`.
 
 
 Framework Support: Pyramid
