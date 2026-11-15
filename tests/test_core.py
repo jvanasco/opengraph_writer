@@ -314,3 +314,36 @@ class Tests_DataTypes(unittest.TestCase, _TestsHelper):
 <meta property="og:type" content="article"/>
 <meta property="og:url" content="http://f.me"/>""",
         )
+
+    def test_invalid_metadata_values(self) -> None:
+        """Report invalid URL, type and integer values without raising."""
+        for schema1 in (False, True):
+            item = self._make_core_compliant()
+            item.set("og:image", None)
+            item.set("og:type", ["website"])
+            self.assertFalse(item.validate(schema1=schema1, schema2=not schema1))
+            self.assertIn("og:image", item.errors()["critical"])
+            self.assertIn("og:type", item.errors()["critical"])
+
+        item = self._make_core_compliant(og_type="music.album")
+        for value in (None, float("inf")):
+            item.set("music:song:track", value)
+            self.assertTrue(item.validate())
+            self.assertIn("music:song:track", item.errors()["recommended"])
+
+    def test_repeated_image_values(self) -> None:
+        """Validate each image and render repeated values in insertion order."""
+        item = self._make_core_compliant()
+        item.set("og:image", "https://example.com/b.png", append=True)
+        self.assertTrue(item.validate())
+        self.assertEqual(
+            item.as_html().splitlines()[:2],
+            [
+                '<meta property="og:image" content="http://f.me/a.png"/>',
+                '<meta property="og:image" content="https://example.com/b.png"/>',
+            ],
+        )
+        item.set("og:image", 123, append=True)
+        self.assertFalse(item.validate())
+        self.assertIn("og:image", item.errors()["critical"])
+        self.assertIn('<meta property="og:image" content="123"/>', item.as_html())

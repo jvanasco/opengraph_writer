@@ -1,3 +1,9 @@
+1.0.0
+    * Report invalid URL, integer, and og:type values as validation errors.
+    * Validate repeated property values individually and preserve their render order.
+    * Consolidate package and test configuration and cover Python 3.6 through 3.15 in CI.
+    * Generate HTML coverage reports and retain Pyramid compatibility on Python 3.7–3.9.
+
 0.4.0
     * typing support
     * drop PY2

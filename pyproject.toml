@@ -1,2 +1,12 @@
+[build-system]
+requires = ["setuptools>=40.9", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 target-version = ['py36']
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module = ["pyramid", "pyramid.*"]
+ignore_missing_imports = true

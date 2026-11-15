@@ -1,45 +1,58 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Python package
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    name: core-tests--py-${{ matrix.python-version }}--${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
-        os:
-          - "ubuntu-latest"
-        python-version:
-          - "3.7"
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
         include:
-          # ubuntu-latest[22.04] does not have: py36
-          - os: "ubuntu-20.04"
-            python-version: "3.6"
-        pyramid-version: [">=2"]
+          - python-version: "3.6"
+            image: python:3.6.15-bullseye
+          - python-version: "3.7"
+            image: python:3.7.17-bullseye
+          - python-version: "3.8"
+          - python-version: "3.9"
+          - python-version: "3.10"
+          - python-version: "3.11"
+          - python-version: "3.12"
+          - python-version: "3.13"
+          - python-version: "3.14"
+          - python-version: "3.15"
+            prerelease: true
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install --upgrade tox setuptools flake8 pytest mypy
-        pip freeze
-    - name: Test with pytest
-      run: |
-        # tox is used to run pytest
-        tox -e py -- ${{ matrix.pytest-args }}
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        if: ${{ !matrix.image }}
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: ${{ matrix.prerelease || false }}
+      - name: Test on the hosted runner
+        if: ${{ !matrix.image }}
+        run: |
+          python -m pip install tox
+          python -m tox -e py
+      - name: Test in the official Python image
+        if: ${{ matrix.image }}
+        env:
+          PYTHON_IMAGE: ${{ matrix.image }}
+        run: |
+          docker run --rm --volume "$PWD:/checkout" --workdir /checkout "$PYTHON_IMAGE" \
+            sh -ec 'python -m pip install "tox<4" && python -m tox -e py'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-python-${{ matrix.python-version }}
+          path: htmlcov/
+          if-no-files-found: error
