@@ -55,9 +55,8 @@ import typing
 from metadata_utils import html_attribute_escape
 
 # typing
-_OG_KV = typing.Tuple[str, str]
-_OG_KV_MANY = typing.List[_OG_KV]
-_OG_SET = typing.Tuple[str, typing.Any]
+_OG_KV = typing.Tuple[str, typing.Any]
+_OG_KV_MANY = typing.Iterable[_OG_KV]
 _OG_DATA = typing.Dict[str, typing.Any]
 
 
@@ -575,7 +574,8 @@ og_properties = OG_PROPERTIES
 
 
 class OGErrors(dict):
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize the validation result buckets."""
         self["critical"] = {}
         self["recommended"] = {}
         self["not_validated"] = []
@@ -585,6 +585,7 @@ def validate_item(
     info_dict: typing.Dict[str, typing.Any],
     value: typing.Any,
 ) -> bool:
+    """Check one metadata value against its declared type."""
     if info_dict["type"] == "string":
         if isinstance(value, str):
             return True
@@ -610,10 +611,9 @@ def validate_item(
                 return True
             else:
                 # coercing an int(value) into a string should catch utf8&string types, and fail on floats
-                # this can raise a valueerror though
                 if value == "%s" % int(value):
                     return True
-        except ValueError:
+        except (TypeError, ValueError, OverflowError):
             return False
 
     elif info_dict["type"] == "datetime":
@@ -626,9 +626,7 @@ def validate_item(
             return False
 
     elif info_dict["type"] == "url":
-        if re.match(regex_url, value):
-            return True
-        return False
+        return isinstance(value, str) and regex_url.match(value) is not None
 
     elif info_dict["type"] == "profile":
         # TODO
@@ -636,6 +634,13 @@ def validate_item(
         return True
 
     return False
+
+
+def _validate_values(info: typing.Dict[str, typing.Any], value: typing.Any) -> bool:
+    """Validate every entry in a repeated metadata property."""
+    if isinstance(value, list):
+        return bool(value) and all(validate_item(info, entry) for entry in value)
+    return validate_item(info, value)
 
 
 def stringify(value: typing.Any) -> str:
@@ -648,7 +653,7 @@ def stringify(value: typing.Any) -> str:
         return value.isoformat()
     elif isinstance(value, datetime.date):
         return value.isoformat()
-    return value
+    return str(value)
 
 
 class OpenGraphItem(object):
@@ -668,15 +673,16 @@ class OpenGraphItem(object):
         pairs: _OG_KV_MANY,
     ) -> None:
         for pair in pairs:
-            (f, v) = pair
+            f, v = pair
             self.set(f, v)
 
     def set(
         self,
         field: str,
-        value: str,
+        value: typing.Any,
         append: bool = False,
     ) -> None:
+        """Replace a property value or append another value in order."""
         if not append:
             self._data[field] = value
         else:
@@ -738,13 +744,15 @@ class OpenGraphItem(object):
                 else:
                     # required; check validity
                     validate_fields.remove(i)
-                    if not validate_item(OG_PROPERTIES[i], self._data[i]):
+                    if not (validate_item if i == "og:type" else _validate_values)(
+                        OG_PROPERTIES[i], self._data[i]
+                    ):
                         _set_error("critical", i, "Required Element does not validate")
             else:
                 # not required; check validity
                 if i in self._data:
                     validate_fields.remove(i)
-                    if not validate_item(OG_PROPERTIES[i], self._data[i]):
+                    if not _validate_values(OG_PROPERTIES[i], self._data[i]):
                         _set_error(
                             "recommended", i, "non-required Element does not validate"
                         )
@@ -756,14 +764,20 @@ class OpenGraphItem(object):
             if not og_type:
                 _set_error("critical", "og:type", "Missing og:type")
             else:
-                if og_type not in OG_PROPERTIES["og:type"]["valid_types-1"]:
+                if (
+                    not isinstance(og_type, str)
+                    or og_type not in OG_PROPERTIES["og:type"]["valid_types-1"]
+                ):
                     _set_error("critical", "og:type", "Invalid og:type")
 
         if schema2:
             if not og_type:
                 _set_error("critical", "og:type", "Missing og:type")
             else:
-                if og_type not in OG_PROPERTIES["og:type"]["valid_types-2"]:
+                if (
+                    not isinstance(og_type, str)
+                    or og_type not in OG_PROPERTIES["og:type"]["valid_types-2"]
+                ):
                     _set_error("critical", "og:type", "Invalid og:type")
                 else:
                     # validate all the likely subtypes
@@ -776,15 +790,15 @@ class OpenGraphItem(object):
                         if subtype in self._data:
                             value = self._data[subtype]
                         if "required" in og_type_dict and og_type_dict["required"]:
-                            if subtype not in OG_PROPERTIES:
+                            if subtype not in self._data:
                                 _set_error(
                                     "critical",
                                     "%s" % subtype,
                                     "Missing required subtype",
                                 )
                             else:
-                                validate_fields.remove(subtype)
-                                if not validate_item(subtype_dict, value):
+                                validate_fields.discard(subtype)
+                                if not _validate_values(subtype_dict, value):
                                     _set_error(
                                         "critical",
                                         "%s" % subtype,
@@ -798,8 +812,8 @@ class OpenGraphItem(object):
                                     "non-required subtype not included",
                                 )
                             else:
-                                validate_fields.remove(subtype)
-                                if not validate_item(subtype_dict, value):
+                                validate_fields.discard(subtype)
+                                if not _validate_values(subtype_dict, value):
                                     _set_error(
                                         "recommended",
                                         "%s" % subtype,
