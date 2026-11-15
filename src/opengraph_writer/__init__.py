@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 """
 ==============
 
@@ -44,7 +42,7 @@ Arrays
     Put structured properties after you declare their root tag. Whenever another root element is parsed, that structured property is considered to be done and another one is started.
 """
 
-__VERSION__ = "0.5.0"
+__VERSION__ = "1.0.0"
 
 # stdlib
 import datetime

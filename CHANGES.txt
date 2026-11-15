@@ -1,4 +1,4 @@
-0.5.0
+1.0.0
     * Report invalid URL, integer, and og:type values as validation errors.
     * Validate repeated property values individually and preserve their render order.
     * Consolidate package and test configuration and cover Python 3.6 through 3.15 in CI.
